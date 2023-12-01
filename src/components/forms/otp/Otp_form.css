@@ -1,0 +1,101 @@
+.form 
+{
+    border: 2px solid;
+    width:500px;
+    height:300px;
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    column-gap: 20px;
+    position: relative;
+}
+.form .text 
+{
+    position: absolute;
+    top:5px;
+    left:6%;
+}
+.form .text p:first-child{
+    font-size: large;
+}
+.form .form-control input{
+    width:60px;
+    height: 80px;
+    border-radius: 20px;
+    font-size: xx-large;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    outline: none;
+}
+.from .form-control input:focus{
+    border:2px solid rgb(0, 140, 255);
+}
+.form .form-control input:hover{
+    border: 2px solid rgb(138, 134, 134);
+}
+.form .btn-control
+{
+    position: absolute;
+    bottom:10px;
+    left:30px;
+    column-gap: 20px;
+    display: flex;
+    flex-direction: row;
+}
+.form .btn-control button{
+    padding: 10px;
+    width: 200px;
+    height: 40px;
+    color: white;
+    background: rgb(27, 190, 244);
+    font-size: 15px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    outline: none;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+.form .btn-control button:hover{
+    cursor: pointer;
+    border: 3px solid rgb(15, 122, 209);
+}
+
+.form .msg{
+    position: absolute;
+    top:400px;
+    left:100px;
+}
+@media only screen and (max-width:600px) {
+    .form .form-control input{
+        width: 40px;
+        height:60px;
+    }
+    .form{
+        width:340px;
+        column-gap: 10px;
+    }
+    .form .text{
+        top:10px;
+        left:10px;
+    }
+    .form .text p:first-child{
+        font-size: 13px;
+    }
+    .form .btn-control button{
+        width:150px;
+    }
+    .form .btn-control{
+        left:10px;
+    } 
+    .form .msg{
+        left:0;
+    }
+}

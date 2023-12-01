@@ -1,0 +1,126 @@
+.form_l
+{
+    border: 2px solid rgb(221, 217, 217);
+    width: 350px;
+    height: 500px;
+    margin-top: 30px;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    padding: 0px 60px;
+    position: relative;
+}
+.form_l .form_control {
+    margin: 0;
+    margin-bottom: 15px;
+    position: relative;
+  }
+  
+  .form_l .form_group {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+  }
+  .form_l input {
+    padding: 10px;
+    width: 250px;
+    height: 50px;
+    border:2px solid rgb(118, 116, 116);
+    outline: none;
+  }
+  .fomr_l input:hover{
+    border:2px solid black;
+  }
+  
+  .form_l input:focus::placeholder {
+    font-size: 1.5ex;
+    transform: translateY(-15px);
+    transition: .3s;
+  }
+  .form_l .checker {
+  
+    height: 5px;
+    border-radius: 20px;
+    display: none;
+    display: flex;
+    justify-content: flex-start;
+    transition: all .5s;
+  }
+  .form_l .btn {
+    position: relative;
+    padding: 10px;
+    width: 250px;
+    height: 40px;
+    color: white;
+    background: rgb(27, 190, 244);
+    font-size: 15px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    outline: none;
+  }
+
+  .form_l .btn div {
+    position:absolute;
+    right:25px;
+    top:3.5px;
+  }
+  
+  .form_l .checker div {
+    transition: all .5s;
+  }
+  
+  .form_l .check_icon {
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    top: 0;
+    right: -50px;
+    display: grid;
+    padding: 10px;
+    justify-content: start;
+    align-items: center;
+  }
+  .form_l #p_icon {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+  }
+  .form_l .password_chart
+  {
+    background: white;
+    border:2px solid black;
+    height:max-content;
+    position:absolute;
+    z-index:1;
+    bottom:-102px;
+    font-size: small;
+    width:250px;
+    display: grid;
+    align-items: center;
+    padding: 5px;
+    transition: all .5s;
+    
+  }
+  .form_l .password_chart div:not(:first-child){
+    display: grid;
+    align-items: center;
+    position: relative;
+  }
+  .form_l .password_chart div:not(:first-child) i{
+    position: absolute;
+    right:0px;
+  }
+ .form_l .error_message
+{
+  color:red;
+  font-size:small;
+  float:right;
+  margin-right:10px ;
+}
+.form_l .msg{
+  position: absolute;
+  top:-80px;
+  left:25px;
+}

@@ -1,0 +1,155 @@
+
+.form_r {
+  border: 2px solid rgb(221, 217, 217);
+  width: 350px;
+  height: 600px;
+  margin-top: 30px;
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  padding: 0px 60px;
+  position: relative;
+}
+
+.form_r .divider {
+  width: 260px;
+  height: 1px;
+  background: rgb(175, 172, 172);
+  position: relative;
+}
+
+.form_r .divider p {
+  position: absolute;
+  left: 44%;
+  top: -10px;
+  background: white;
+  width: 30px;
+  height: auto;
+  text-align: center;
+  font-size: 12px;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.form_r .form_control {
+    margin: 0;
+    margin-bottom: 15px;
+    position: relative;
+  }
+  
+  .form_r .form_group {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .form_r input {
+    padding: 10px;
+    width: 250px;
+    height: 50px;
+    border:2px solid rgb(118, 116, 116);
+    outline: none;
+  }
+  
+  input:focus::placeholder {
+    font-size: 1.5ex;
+    transform: translateY(-15px);
+    transition: .3s;
+  }
+  
+  .form_r .checker {
+  
+    height: 5px;
+    border-radius: 20px;
+    display: none;
+    display: flex;
+    justify-content: flex-start;
+    transition: all .5s;
+  }
+  
+  
+  .form_r .checker div {
+    transition: all .5s;
+  }
+  
+  .form_r .check_icon {
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    top: 0;
+    right: -40px;
+    display: grid;
+    padding: 10px;
+    justify-content: start;
+    align-items: center;
+    color: green;
+  }
+  
+  .form_r .terms {
+    color: #908E9B;
+    font-size: 12px;
+    text-align: center;
+  }
+  
+  .form_r .btn {
+    position: relative;
+    padding: 10px;
+    width: 250px;
+    height: 40px;
+    color: white;
+    background: rgb(27, 190, 244);
+    font-size: 15px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    outline: none;
+  }
+
+  .form_r .btn div {
+    position:absolute;
+    right:25px;
+    top:3.5px;
+  }
+  
+  .form_r #p_icon {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+  }
+  .form_r .password_chart
+  {
+    background: white;
+    border:2px solid black;
+    height:max-content;
+    position:absolute;
+    z-index:1;
+    bottom:-102px;
+    font-size: small;
+    width:250px;
+    display: grid;
+    align-items: center;
+    padding: 5px;
+    transition: all .5s;
+    
+  }
+  .form_r .password_chart div:not(:first-child){
+    display: grid;
+    align-items: center;
+    position: relative;
+  }
+  .form_r .password_chart div:not(:first-child) i{
+    position: absolute;
+    right:0px;
+  }
+.form_r .error_message
+{
+  color:red;
+  font-size:small;
+  float:right;
+  margin-right:10px ;
+}
+.form_r .msg{
+  position: absolute;
+  top:-82px;
+  left:17px;
+}
