@@ -1,3 +1,6 @@
+# SocioLink SocialMedia Application
+Social Media Application made using react JS, nodeJS and mongoDB database server
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
