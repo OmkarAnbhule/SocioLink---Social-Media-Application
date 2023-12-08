@@ -355,7 +355,6 @@ const getData1  = async () => {
       <div className='msg' style={{ display: msg.display }}>
         <Snack_bar type={type} message={message} refer={childref} />
       </div>
-      Hello World
     </div>
   )
 }
