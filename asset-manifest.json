@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/OmkarAnbhule/SocioLink---Social-Media-Application.git/static/css/main.931fbb3e.css",
+    "main.js": "/OmkarAnbhule/SocioLink---Social-Media-Application.git/static/js/main.13f57b0f.js",
+    "static/js/787.7511aa5b.chunk.js": "/OmkarAnbhule/SocioLink---Social-Media-Application.git/static/js/787.7511aa5b.chunk.js",
+    "index.html": "/OmkarAnbhule/SocioLink---Social-Media-Application.git/index.html",
+    "main.931fbb3e.css.map": "/OmkarAnbhule/SocioLink---Social-Media-Application.git/static/css/main.931fbb3e.css.map",
+    "main.13f57b0f.js.map": "/OmkarAnbhule/SocioLink---Social-Media-Application.git/static/js/main.13f57b0f.js.map",
+    "787.7511aa5b.chunk.js.map": "/OmkarAnbhule/SocioLink---Social-Media-Application.git/static/js/787.7511aa5b.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.931fbb3e.css",
+    "static/js/main.13f57b0f.js"
+  ]
+}
