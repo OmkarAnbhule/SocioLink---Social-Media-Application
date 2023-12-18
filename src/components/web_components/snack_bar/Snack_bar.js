@@ -1,79 +1,95 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useTransition } from 'react'
 import './Snack_bar.css'
 
 export default function Snack_bar(props) {
-    const [icon,seticon] = useState('');
+    const [icon, seticon] = useState('');
+    const [isPending,startTransition] = useTransition();
     const [style, setstyle] = useState({
         transform: 'scaleX(0)',
         display: 'grid',
-        pdisplay:'none'
+        pdisplay: 'none'
     })
     const isMountingRef = useRef();
-    const type = () =>{
-        if(props.type=='Success')
-        {
-            setstyle({
-                background:'limegreen',
+    const type = () => {
+        if (props.type == 'Success') {
+            startTransition(()=>{
+                setstyle({
+                    background: 'limegreen',
+                    transform: 'scaleX(1)',
+                    display: 'grid',
+                    pdisplay: 'block'
+                })
             })
             seticon('bi bi-check-circle-fill');
         }
-        if(props.type=='Warning')
-        {
-            setstyle({
-                background:'orange'
+        if (props.type == 'Warning') {
+            startTransition(()=>{
+                setstyle({
+                    background: 'orange',
+                    transform: 'scaleX(1)',
+                    display: 'grid',
+                    pdisplay: 'block'
+                })
             })
             seticon('bi bi-exclamation-triangle-fill');
         }
-        if(props.type=='Failed')
-        {
-            setstyle({
-                background:'red',
+        if (props.type == 'Failed') {
+            startTransition(()=>{
+                setstyle({
+                    background: 'red',
+                    transform: 'scaleX(1)',
+                    display: 'grid',
+                    pdisplay: 'block'
+                })  
             })
             seticon('bi bi-exclamation-circle-fill');
         }
-        if(props.type=='Info')
-        {
-            setstyle({
-                background:'rgb(0, 195, 255)',
+        if (props.type == 'Info') {
+            startTransition(()=>{
+                setstyle({
+                    background: 'rgb(0, 195, 255)',
+                    transform: 'scaleX(1)',
+                    display: 'grid',
+                    pdisplay: 'block'
+                })
             })
             seticon('bi bi-info-circle-fill');
         }
     }
-    useEffect(()=>{
+    useEffect(() => {
         isMountingRef.current = true;
-    },[])
-    useEffect(()=>{
-        if(!isMountingRef.current){
-        setstyle({
-            transform: 'scaleX(1)',
-            display:'grid',
-            pdisplay:'block',
-        })
-        progress_bar()
-    }
-    else{
-        isMountingRef.current = false
-    }
-    },[props.type])
+    }, [])
+    useEffect(() => {
+            startTransition(()=>{
+                setstyle({
+                transform: 'scaleX(1)',
+                display: 'grid',
+                pdisplay: 'block',
+            })
+            })
+            progress_bar()
+    }, [props.type])
     const progress_bar = () => {
-        setstyle({
-            transform: 'scaleX(1)',
-            display:'grid',
-            pdisplay:'block'
-        })
+        startTransition(()=>{
+                setstyle({
+                transform: 'scaleX(1)',
+                display: 'grid',
+                pdisplay: 'block',
+            })
+            })
         type();
-        setTimeout(()=>{
+        setTimeout(() => {
             display()
-        },4000)
+        }, 5000)
     }
     const display = () => {
         setstyle({
-            display:'none',
-            pdisplay:'block',
-            transform:'scaleX(0)'
+            display: 'none',
+            pdisplay: 'block',
+            transform: 'scaleX(0)'
         })
     }
-    
+
     // useEffect(() => {
     //     console.log('effect')
     //     if (count >= 350) return;
@@ -84,11 +100,11 @@ export default function Snack_bar(props) {
     //     return () => {console.log('return');clearInterval(id);}
     // }, [ count ]);
     return (
-        <div className='Snack_bar' style={{ display: style.display,background:style.background}}>
-            <button style={{display:'none'}} ref={props.refer} onClick={progress_bar}>cli</button>
+        <div className='Snack_bar' key={props.key} style={{ display: style.display, background: style.background }}>
+            <button style={{ display: 'none' }} ref={props.refer} onClick={progress_bar}>cli</button>
             <div className='text'><i className={icon}></i><>{props.message}</></div>
             <div className='close' onClick={display}><i className='bi bi-x-circle' ></i></div>
-            <div className='progress' style={{ transform: style.transform , display:style.display }}></div>
+            <div className='progress' style={{ transform: style.transform, display: style.display }}></div>
         </div>
     )
 }

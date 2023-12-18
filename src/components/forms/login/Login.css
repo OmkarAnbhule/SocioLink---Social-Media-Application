@@ -87,6 +87,10 @@
     top: 16px;
     right: 20px;
   }
+  .form_l #p_icon:hover
+  {
+    cursor: pointer;
+  }
   .form_l .password_chart
   {
     background: white;
@@ -123,4 +127,43 @@
   position: absolute;
   top:-80px;
   left:25px;
+}
+.form_l h1{
+  margin-bottom: -20px;
+  text-align: center;
+  position: relative;
+  left:-10px;
+}
+.form_l .fp_link p:hover{
+  cursor: pointer;
+  text-decoration: underline;
+  color:rgb(47, 0, 255);
+}
+.form_l .fp_link{
+  position: relative;
+  top:-55px;
+  left:135px;
+}
+.form_l .fp_link p{
+  font-size: 14px;
+}
+.form_l .register_link a:hover{
+  cursor: pointer;
+  text-decoration: underline;
+  color: blue;
+}
+.form_l .register_link p {
+  font-size: .9em;
+  text-align: center;
+}
+.form_l .register_link{
+  position: relative;
+  top:-10px;
+  width:100%
+}
+.form_l button:hover{
+  cursor: pointer;
+  background: none;
+  border: 2px solid black;
+  color: black;
 }
