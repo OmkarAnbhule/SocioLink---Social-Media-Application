@@ -50,7 +50,12 @@ export default function Register() {
   function assignClearUsername(UsernameClearStateFunc) {
     clearUsername = UsernameClearStateFunc;
   };
-
+  useEffect(()=>{
+    if(localStorage.getItem('login') == 'true')
+    {
+      navigate('/main')
+    }
+  },[])
 
   function resetform() {
     clearEmail_mobile();

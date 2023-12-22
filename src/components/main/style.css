@@ -151,9 +151,153 @@ right: 10px;
         min-width:100vw;
     }
 }
+/*Create Post CSS*/
+.create{
+    width:calc(96vw);
+    height: auto;
+    display: grid;
+    grid-template-areas:'head head head''caption caption details''caption caption details''post post links''post post btn'; 
+    grid-gap: 10px;
+    overflow-y: hidden;
+    padding-bottom:20px;
+}
+.create > div {
+    border:2px solid black;
+    color: black;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    width:45em;
+}
+.create h1{
+grid-area:head;
+}
+.create .caption
+{
+    grid-area: caption;
+}
+.create .caption textarea{
+    resize:none;
+    width:100%
+}
+.create .post
+{
+    height: 480px;
+    grid-area: post;
+}
+.create .post > div{
+    border: 2px solid black;
+    width:40em;
+}
+.create .post > div:first-child{
+    height: 350px;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+}
+.create .post > div:first-child .display img,video{
+    object-fit: contain;
+    aspect-ratio: 3/4;
+    background: black;
+    }
+.create .post > div:first-child .display::-webkit-scrollbar{
+    display: none;
+}
+.create .post > div:first-child .display{
+    width:300px;
+    height: 300px;
+    display:grid;
+    justify-content: center;
+    align-items: center;
+    overflow: auto;
+    cursor: zoom-in;
+}
+.create .post > div:nth-child(2)
+{
+    height: 100px;
+    display: flex;
+    align-items: center;
+    column-gap: 20px;
+    padding-left: 10px;
+    overflow:hidden;
+    overflow-x:scroll;
+    padding-right: 10px;
+}
+.create .post > div:nth-child(2)::-webkit-scrollbar{
+    display: none;
+}
+.create .post > div:nth-child(2) .media-control i:nth-child(2) {
+    width:10px;
+    height: 10px;
+    position: absolute;
+    right:-6px;
+    top:-15px;
+    z-index: 1;
+}
+.create .post > div:nth-child(2) .media-control img,video{
+    object-fit: contain;
+}
+.create .post > div:nth-child(2) .media-control
+{
+    border: 2px solid black;
+}
+.create .post > div:nth-child(2) .media-control:hover img{
+    filter: blur(5px);
+}
+.create .post > div:nth-child(2) .media-control:hover video{
+    filter: blur(5px);
+}
+.create .post > div:nth-child(2) .media-control:hover i:first-child
+{
+    display: block;
+}
+.create .post > div:nth-child(2) .media-control i:first-child{
+position: absolute;
+top:50%;
+left: 50%;
+transform: translate(-10px,-10px);
+z-index: 1;
+display:none;
+}
+.create .post > div:nth-child(2) .media-control i:nth-child(2):hover {
+cursor: pointer;
+color:cyan;
+}
+.create .post >div:nth-child(2) .media-control{
+    position: relative;
+}
+.create .post > div:nth-child(2) label{
+    border: 2px solid black;
+    width:50px;
+    min-width: 50px;
+    height: 50px;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+}
+.create .post > div:nth-child(2) label i{
+    font-size: x-large;
 
-.Create{
-    width:100vw;
-    height: 100vh;
-    background: red;
+}
+.create .post div label{
+
+}
+
+
+
+
+
+
+.create .details{
+    background: green;
+    grid-area: details;
+}
+.create .links{
+    background: yellow;
+    grid-area: links;
+}
+.create .btn{
+    background: pink;
+    grid-area: btn;
 }

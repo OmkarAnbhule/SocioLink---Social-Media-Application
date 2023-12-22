@@ -26,7 +26,6 @@ export default function Home() {
   }
   const logout_navigate = (res) => {
     if (res.Response == 'Success') {
-      localStorage.clear();
       navigate('/login')
     }
     else {
@@ -43,6 +42,7 @@ export default function Home() {
       setCurr(curr + 1)
     })
   }
+  
   useEffect(() => {
     activity()
     const id = setTimeout(() => {
@@ -51,12 +51,13 @@ export default function Home() {
       }
       else {
         if (curr == pre) {
+          localStorage.clear()
           logout()
           clearTimeout(id)
         }
       }
-    }, 1000 * 60 * 1)
-  }, [curr])
+    }, 1000 * 60 * 15)
+  }, [curr,pre])
 
 
 

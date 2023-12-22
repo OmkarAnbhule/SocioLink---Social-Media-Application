@@ -473,6 +473,7 @@ app.post('/reset_password', async (req, resp) => {
 
 // logout function
 app.post('/logout', async (req, resp) => {
+	console.log('logging out')
 	try {
 		const { email } = req.body;
 		const res = await Log.findOneAndDelete({ log_id: email });

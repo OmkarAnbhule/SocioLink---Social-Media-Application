@@ -60,6 +60,7 @@ export default function Navbar() {
             }
           }
         })
+        localStorage.setItem('key',EncryptedData.substring(1,5));
       }
       const secrePass = 'XkhZG4fW2t2W'
       const encrpyt = async () => {
