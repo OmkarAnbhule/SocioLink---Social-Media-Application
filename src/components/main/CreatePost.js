@@ -129,7 +129,14 @@ export default function CreatePost() {
                     {files.length > 0 ? (<label htmlFor='file'><i className='bi bi-plus-circle'></i></label>) : null}
                 </div>
             </div>
-            <div className='details'>3</div>
+            <div className='details'>
+<div className="input-control">
+<input type="text" pl	aceholder="Pick your location.../>
+</div>
+<div className="tags-control">
+<input type="text" />
+</div>
+</div>
             <div className='links'>4</div>
             <div className='btn'>5</div>
         </div>
