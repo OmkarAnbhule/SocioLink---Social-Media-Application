@@ -13,6 +13,7 @@ export default function CreatePost() {
     const containerRef = useRef(null)
     const [draggedItem, setDraggedItem] = useState('')
     const [dragId, setDragId] = useState()
+			const [tags,setTags] = useState()
     const [clickCoordinates, setClickCoordinates] = useState({ x: 0, y: 0 });
     const check_login = () => {
         if (isLoggedin != 'true')
@@ -69,6 +70,12 @@ export default function CreatePost() {
         setfiles(updatedItems)
         setDraggedItem(null)
     }
+			const handleTags = (e) => {
+setTags(e.target.value)
+let val = e.target.value
+substr = val.split(/[#]/)
+
+}
     useEffect(() => {
         check_login()
     }, [])
@@ -134,7 +141,7 @@ export default function CreatePost() {
 <input type="text" pl	aceholder="Pick your location.../>
 </div>
 <div className="tags-control">
-<input type="text" />
+<input type="text" onChange="handleTags" placeholder="Add # before and end of tag... "/>
 </div>
 </div>
             <div className='links'>4</div>
