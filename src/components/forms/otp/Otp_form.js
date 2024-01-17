@@ -2,11 +2,10 @@ import React, { useEffect, useRef, useState } from 'react'
 import './Otp_form.css'
 import { useLocation, useNavigate } from 'react-router-dom';
 import Snack_bar from '../../web_components/snack_bar/Snack_bar';
+import Login from '../login/Login';
 export default function Otp_form() {
     const { state } = useLocation();
-    const { email, name, username, password, login, forgot_password } = state;
-    const { log_id, log_val, log_pass } = login
-    const { fp_email, fp_val } = forgot_password
+    const { email, name, username, password } = state;
     const navigate = useNavigate();
     const [first, setfirst] = useState();
     const [second, setsecond] = useState();
@@ -16,7 +15,7 @@ export default function Otp_form() {
     const [sixth, setsixth] = useState();
     const [min, setMin] = useState(0);
     const [sec, setSec] = useState(0);
-
+    const [key, setkey] = useState(0);
     const [msg, setmsg] = useState({
         display: 'none',
     })
@@ -27,12 +26,16 @@ export default function Otp_form() {
     })
     const [type, settype] = useState('')
     const [message, setmessage] = useState('')
+    const reset_pin = useRef(null);
     const inputref1 = useRef(null);
     const inputref2 = useRef(null);
     const inputref3 = useRef(null);
     const inputref4 = useRef(null);
     const inputref5 = useRef(null);
     const inputref6 = useRef(null);
+    const random = (min, max) => {
+        return Math.floor(Math.random() * (max * min + 1) + min)
+    }
     const handleChange1 = (e) => {
         let temp = e.target.value;
         temp = temp.replace(/[^0-9]/g, '');
@@ -119,111 +122,120 @@ export default function Otp_form() {
         }
     }
     const handleReset = async () => {
-        if (fp_email != '') {
-            let email_valid = /^[a-z0-9]+@[a-z]+\.[a-z]{2,3}$/.test(email);
-            if(email_valid)
-            {
-            try {
-                console.log('yup1')
-                let result = await fetch(
-                    'http://localhost:5000/validate_user', {
-                    method: "post",
-                    body: JSON.stringify({ email: fp_email, val: fp_val }),
-                    headers: {
-                        'Content-Type': 'application/json'
+        setkey(random(1, 20));
+        if (state && state.forgot_password) {
+            const { fp_email, fp_val } = state.forgot_password
+            if (fp_email != '') {
+                let email_valid = /^[a-z0-9]+@[a-z]+\.[a-z]{2,3}$/.test(fp_email);
+                if (email_valid) {
+                    try {
+                        console.log('yup1')
+                        let result = await fetch(
+                            'http://localhost:5000/forgot_password_otp', {
+                            method: "post",
+                            body: JSON.stringify({ text: fp_email, val: fp_val }),
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                        result = await result.json();
+                        display_data1(result)
                     }
-                })
-                result = await result.json();
-                display_data1(result)
+                    catch (e) {
+                        console.log(e)
+                    }
+                }
+                else {
+                    setmsg('block');
+                    settype('warning')
+                    setmessage('Something went wrong')
+                }
             }
-            catch (e) {
-            }
-        }
-        else{
-
-        }
         }
         else {
-            if (log_id != '') {
-                let email_valid = /^[a-z0-9]+@[a-z]+\.[a-z]{2,3}$/.test(email);
-                if(email_valid)
-                {
-                try {
-                    console.log('yup1')
-                    let result = await fetch(
-                        'http://localhost:5000/login', {
-                        method: "post",
-                        body: JSON.stringify({ log_id, val: log_val, password: log_pass }),
-                        headers: {
-                            'Content-Type': 'application/json'
+            if (state && state.login) {
+                const { log_id, log_val, log_pass } = state.login
+                if (log_id != '') {
+                    let email_valid = /^[a-z0-9]+@[a-z]+\.[a-z]{2,3}$/.test(log_id);
+                    if (email_valid) {
+                        try {
+                            console.log('yup1')
+                            let result = await fetch(
+                                'http://localhost:5000/login', {
+                                method: "post",
+                                body: JSON.stringify({ text:log_id, val: log_val, password: log_pass }),
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }
+                            })
+                            result = await result.json();
+                            display_data1(result)
                         }
-                    })
-                    result = await result.json();
-                    display_data1(result)
-                }
-                catch (e) {
-                }
-            }
-            else{
-                try {
-                    console.log('yup1')
-                    let result = await fetch(
-                        'http://localhost:5000/login_sms', {
-                        method: "post",
-                        body: JSON.stringify({log_id, val: log_val, password: log_pass }),
-                        headers: {
-                            'Content-Type': 'application/json'
+                        catch (e) {
                         }
-                    })
-                    result = await result.json();
-                    display_data1(result)
+                    }
+                    else {
+                        try {
+                            console.log('yup1')
+                            let result = await fetch(
+                                'http://localhost:5000/login_sms', {
+                                method: "post",
+                                body: JSON.stringify({ text:log_id, val: log_val, password: log_pass }),
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }
+                            })
+                            result = await result.json();
+                            display_data1(result)
+                        }
+                        catch (e) {
+                        }
+                    }
                 }
-                catch (e) {
-                }
-            }
             }
             else {
                 let email_valid = /^[a-z0-9]+@[a-z]+\.[a-z]{2,3}$/.test(email);
-                if(email_valid)
-                {
-                try {
-                    console.log('yup1')
-                    let result = await fetch(
-                        'http://localhost:5000/register', {
-                        method: "post",
-                        body: JSON.stringify({ email }),
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    })
-                    result = await result.json();
-                    display_data1(result)
-                }
-                catch (e) {
-                }
-            }
-        
-        else{
-            try {
-                console.log('yup1')
-                let result = await fetch(
-                    'http://localhost:5000/sms', {
-                    method: "post",
-                    body: JSON.stringify({ email }),
-                    headers: {
-                        'Content-Type': 'application/json'
+                if (email_valid) {
+                    try {
+                        console.log('yup1')
+                        let result = await fetch(
+                            'http://localhost:5000/register', {
+                            method: "post",
+                            body: JSON.stringify({ email }),
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                        result = await result.json();
+                        display_data1(result)
                     }
-                })
-                result = await result.json();
-                display_data1(result)
+                    catch (e) {
+                    }
+                }
+
+                else {
+                    try {
+                        console.log('yup1')
+                        let result = await fetch(
+                            'http://localhost:5000/sms', {
+                            method: "post",
+                            body: JSON.stringify({ email }),
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                        result = await result.json();
+                        display_data1(result)
+                    }
+                    catch (e) {
+                    }
+                }
             }
-            catch (e) {
-            }
-        }
-    }
         }
     }
     const handleClick = async () => {
+        setkey(random(1, 20));
+
         let otp = first + second + third + fourth + fifth + sixth;
         console.log(otp)
         if (otp.length < 6 || isNaN(otp)) {
@@ -231,79 +243,68 @@ export default function Otp_form() {
         }
 
         else {
-            if (fp_email != '') {
-                let email_valid = /^[a-z0-9]+@[a-z]+\.[a-z]{2,3}$/.test(log_id);
-                if(email_valid)
-                {
+            if (state && state.forgot_password) {
+                const { fp_email, fp_val } = state.forgot_password
+                if (fp_email != '') {
                     try {
                         console.log('yup')
                         let result = await fetch(
-                            'http://localhost:5000//validate_otp', {
+                            'http://localhost:5000/validate_otp', {
                             method: "post",
-                            body: JSON.stringify({ text:fp_email, otp }),
+                            body: JSON.stringify({ val: fp_val, text: fp_email, otp }),
                             headers: {
                                 'Content-Type': 'application/json'
                             }
                         })
                         result = await result.json();
+                        console.log(result)
                         display_data(result)
+                        console.log(result)
                     }
                     catch (e) {
+                        console.log(e)
                     }
-                }
-                else{
-                    try {
-                        console.log('yup')
-                        let result = await fetch(
-                            'http://localhost:5000//validate_otp', {
-                            method: "post",
-                            body: JSON.stringify({ text:fp_email, otp }),
-                            headers: {
-                                'Content-Type': 'application/json'
-                            }
-                        })
-                        result = await result.json();
-                        display_data(result)
-                    }
-                    catch (e) {
-                    }
+
                 }
             }
             else {
-                if (log_id != '') {
-                    let email_valid = /^[a-z0-9]+@[a-z]+\.[a-z]{2,3}$/.test(log_id);
-                    if (email_valid) {
-                        try {
-                            console.log('yup')
-                            let result = await fetch(
-                                'http://localhost:5000/otp_login', {
-                                method: "post",
-                                body: JSON.stringify({ log_id, otp }),
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                }
-                            })
-                            result = await result.json();
-                            display_data(result)
+                if (state && state.login) {
+                    const { log_id, log_val, log_pass } = state.login
+                    if (log_id != '') {
+                        let email_valid = /^[a-z0-9]+@[a-z]+\.[a-z]{2,3}$/.test(log_id);
+                        if (email_valid) {
+                            try {
+                                console.log('yup')
+                                let result = await fetch(
+                                    'http://localhost:5000/otp_login', {
+                                    method: "post",
+                                    body: JSON.stringify({ log_id, otp }),
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    }
+                                })
+                                result = await result.json();
+                                display_data(result)
+                            }
+                            catch (e) {
+                            }
                         }
-                        catch (e) {
-                        }
-                    }
-                    else {
-                        try {
-                            console.log('yup')
-                            let result = await fetch(
-                                'http://localhost:5000/otp_login_sms', {
-                                method: "post",
-                                body: JSON.stringify({ log_id , otp }),
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                }
-                            })
-                            result = await result.json();
-                            display_data(result)
-                        }
-                        catch (e) {
+                        else {
+                            try {
+                                console.log('yup')
+                                let result = await fetch(
+                                    'http://localhost:5000/otp_login_sms', {
+                                    method: "post",
+                                    body: JSON.stringify({ log_id, otp }),
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    }
+                                })
+                                result = await result.json();
+                                display_data(result)
+                            }
+                            catch (e) {
+                            }
                         }
                     }
                 }
@@ -391,9 +392,6 @@ export default function Otp_form() {
             timer()
             settype('Success')
             setmessage('Otp Sent Successfully')
-            setTimeout(() => {
-                navigate('/main', { state: { email: email, name: name, username: username } })
-            }, 2000)
         }
         else {
             settype('Warning')
@@ -401,10 +399,13 @@ export default function Otp_form() {
         }
     }
     const display_data = (result) => {
+
+        console.log(result.Response)
+
         setmsg({
             display: 'block',
         })
-        if (result == 'empty') {
+        if (result.Response == 'empty') {
             settype('Info')
             setmessage('Input Fields Are Empty')
         }
@@ -418,12 +419,55 @@ export default function Otp_form() {
                 setmessage('Something Went Wrong')
             }
             else {
-                if (result.Response == 'Success') {
-                    settype('Success')
-                    if (log_id != '')
-                        setmessage('Login Successful')
-                    else
-                        setmessage('Registration Successful')
+                if (state && state.forgot_password) {
+                    const { fp_email, fp_val } = state.forgot_password
+                    if (fp_email != '') {
+                        console.log(fp_email)
+                        if (result.Response == 'Success') {
+                            console.log(result.Response)
+                            settype('Success')
+                            setmessage('Otp is Correct')
+
+                            setTimeout(() => {
+                                navigate('/login', {
+                                    state: {
+                                        reset: true,
+                                        id: fp_email
+                                    }
+                                })
+                            }, 2000)
+                        }
+
+                    }
+                }
+                else {
+                    if (state && state.login) {
+                        const { log_id, log_val, log_pass } = state.login
+                        if (result.Response == 'Success') {
+                            settype('Success')
+                            if (log_id != '') {
+                                setmessage('Login Successful')
+                                console.log(log_id)
+                                localStorage.setItem("id", log_id)
+                                localStorage.setItem('login', 'true')
+                                localStorage.setItem('time', Date.now())
+                                setTimeout(() => {
+                                    navigate('/main', { state: { email: log_id } })
+                                }, 2000)
+                            }}
+                            }
+                            else {
+                                if (result.Response == 'Success') {
+                                setmessage('Registration Successful')
+                                localStorage.setItem("id", email)
+                                localStorage.setItem('time', Date.now())
+                                console.log('registered')
+                                setTimeout(() => {
+                                    navigate('/', { state: { file: 'true' } })
+                                }, 2000)
+                            }
+                            }
+                    
                 }
             }
         }
@@ -431,7 +475,7 @@ export default function Otp_form() {
     return (
         <div className='form'>
             <div className='text'>
-                <p>Otp Has Been succesfully Sent To <span style={{ fontWeight: 'bolder' }}>{email ? email : log_id}</span></p>
+                <p>Otp Has Been succesfully Sent To <span style={{ fontWeight: 'bolder' }}>{email ? email : state.login == null ? state.forgot_password == null ? null : state.forgot_password.fp_email : state.login.log_id}</span></p>
             </div>
             <div className='form-control'>
                 <input type='text'
@@ -480,7 +524,10 @@ export default function Otp_form() {
                 </button>
             </div>
             <div className='msg' style={{ display: msg.display }}>
-                <Snack_bar type={type} message={message} />
+                <Snack_bar type={type} message={message} key={key} />
+            </div>
+            <div style={{ display: 'none' }}>
+                <Login refer={reset_pin} />
             </div>
         </div>
     )

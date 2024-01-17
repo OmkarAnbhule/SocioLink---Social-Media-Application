@@ -1,5 +1,807 @@
-.home{
+:root {
+    --SpaceCadet: #142D55;
+    --BlurBetty: #4B92FF;
+    --Diamond: #B7E3FF;
+    --Sapphire: #0856CF;
+}
+
+.home {
+    width: calc(100vw - 200px);
+    display: grid;
+    justify-content: center;
+    align-items: center;
+}
+
+.home .body {
+    height: auto;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    row-gap: 20px;
+    flex-direction: column;
+    overflow: auto;
+    padding-bottom: 50px;
+    padding-top: 20px;
+}
+
+.home .story {
+    width: inherit;
+    height: 100px;
+    border-bottom: 2px solid rgb(172, 161, 161);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    column-gap: 20px;
+    padding: 30px;
+    overflow: hidden;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.home .story::-webkit-scrollbar {
+    display: none;
+}
+
+.home .story img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    padding: 4px;
+    border: 2px solid black;
+}
+
+.home .story div {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.home .story div p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-wrap: wrap;
+    width: 80px;
+    white-space: nowrap;
+    text-align: center;
+}
+
+.home .body .post {
+    width: 70%;
+    border: 2px solid rgb(154, 150, 150);
+    display: grid;
+    align-items: center;
+    box-shadow: 0px 0px 5px 5px rgb(201, 205, 212);
+}
+
+.home .body .post .head {
+    border-bottom: 2px solid rgb(154, 150, 150);
+    height: 60px;
+    display: flex;
+    align-items: center;
     position: relative;
-    top:100px;
-    height: 200vh;
+}
+
+.home .body .post .head .profile {
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    flex-direction: row;
+    column-gap: 5px;
+}
+
+.home .body .post .head .profile img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid black;
+}
+
+.home .body .post .head .profile p {
+    text-align: center;
+    padding-left: 10px;
+}
+
+.home .body .post .head button {
+    position: absolute;
+    right: 10px;
+}
+
+.home .body .post .media {
+    width: calc(100%);
+    height: 400px;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+}
+
+.home .body .post .media>div:first-child {
+    width: 50vw;
+    height: 50vh;
+    border: 2px solid black;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow: hidden;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    margin: auto;
+}
+
+.home .body .post .media>div:first-child:-webkit-scrollbar {
+    display: none;
+}
+
+.home .body .post .media>div:first-child div {
+    border: 2px solid red;
+    width: 100%;
+    flex-shrink: 0;
+    aspect-ratio: 1/1;
+    scroll-snap-align: center;
+}
+
+.home .body .post .media>div:last-child {
+    width: 50vw;
+    display: flex;
+    justify-content: center;
+    column-gap: 20px;
+}
+
+.home .body .post .media>div:last-child p {
+    width: 10px;
+    height: 10px;
+    border: 2px solid black;
+    border-radius: 50%;
+    background: black;
+}
+
+.home .body .post .media_btn {
+    border-bottom: 2px solid rgb(154, 150, 150);
+    border-top: 2px solid rgb(154, 150, 150);
+    height: 30px;
+    width: calc(100%);
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    padding-left: 10px;
+}
+
+.home .body .post .media_btn div {
+    position: absolute;
+    right: 10px;
+    column-gap: 10px;
+    display: flex;
+    flex-direction: row;
+    bottom: 3px;
+    align-items: center;
+    justify-content: center;
+}
+
+.home .body .post .media_btn div button {
+    border: none;
+    background: none;
+}
+
+.home .body .post .media_btn div button i {
+    font-size: medium;
+}
+
+.home .body .post .foot {
+    width: calc(100%);
+    height: 60px;
+}
+
+@media only screen and (max-width:600px) {
+    .home {
+        width: 100vw;
+    }
+
+    .post {
+        min-width: 90vw;
+    }
+}
+
+
+
+
+
+
+
+
+
+/*Create Post CSS*/
+.create {
+    width: calc(96vw);
+    height: auto;
+    display: grid;
+    grid-template-areas: 'head head head'
+        'caption caption details'
+        'post post details'
+        'post post links'
+        'post post btn';
+    grid-gap: 10px;
+    overflow-y: hidden;
+    padding-bottom: 20px;
+}
+
+.create>div {
+    border: 2px solid rgb(156, 155, 155);
+    color: black;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    width: 47vw;
+}
+
+.create h1 {
+    grid-area: head;
+}
+
+.create .caption {
+    grid-area: caption;
+    background: var(--SpaceCadet);
+    color: white;
+    padding-left: 10px;
+}
+
+.create .caption textarea {
+    resize: none;
+    width: 90%;
+    font-size: 15px;
+    outline: none;
+}
+
+.create .post {
+    height: 480px;
+    grid-area: post;
+    background: var(--SpaceCadet);
+}
+
+.create .post>div {
+    border: 2px solid black;
+    width: 45vw;
+    background: white;
+}
+
+.create .post>div:first-child {
+    height: 350px;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.create .post>div:first-child .display img,
+video {
+    object-fit: contain;
+    aspect-ratio: 3/4;
+    background: black;
+}
+
+.create .post>div:first-child .display::-webkit-scrollbar {
+    display: none;
+}
+
+.create .post>div:first-child .display {
+    width: 20vw;
+    height: 40vh;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    overflow: auto;
+    cursor: zoom-in;
+}
+
+.create .post>div:first-child .display img {
+    width: 20vw;
+    height: 40vh;
+}
+
+.create .post>div:first-child i {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    color: black;
+    border: 2px solid black;
+    font-size: 20px;
+    padding: 10px 12px;
+    border-radius: 50%;
+}
+
+.create .post>div:nth-child(2) {
+    height: 100px;
+    display: flex;
+    align-items: center;
+    column-gap: 20px;
+    padding-left: 10px;
+    overflow: hidden;
+    overflow-x: scroll;
+    padding-right: 10px;
+}
+
+.create .post>div:nth-child(2)::-webkit-scrollbar {
+    display: none;
+}
+
+.create .post>div:nth-child(2) .media-control i:nth-child(2) {
+    width: 10px;
+    height: 10px;
+    position: absolute;
+    right: -6px;
+    top: -15px;
+    z-index: 1;
+}
+
+.create .post>div:nth-child(2) .media-control img,
+video {
+    object-fit: contain;
+}
+
+.create .post>div:nth-child(2) .media-control {
+    border: 2px solid black;
+}
+
+.create .post>div:nth-child(2) .media-control:hover img {
+    filter: blur(5px);
+}
+
+.create .post>div:nth-child(2) .media-control:hover video {
+    filter: blur(5px);
+}
+
+.create .post>div:nth-child(2) .media-control:hover i:first-child {
+    display: block;
+}
+
+.create .post>div:nth-child(2) .media-control i:first-child {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-10px, -10px);
+    z-index: 1;
+    display: none;
+}
+
+.create .post>div:nth-child(2) .media-control i:nth-child(2):hover {
+    cursor: pointer;
+    color: cyan;
+}
+
+.create .post>div:nth-child(2) .media-control {
+    position: relative;
+}
+
+.create .post>div:nth-child(2) label {
+    border: 2px solid black;
+    width: 50px;
+    min-width: 50px;
+    height: 50px;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+}
+
+.create .post>div:nth-child(2) label i {
+    font-size: x-large;
+
+}
+
+.create .details {
+    grid-area: details;
+    height: 250px;
+    background: var(--SpaceCadet);
+}
+
+.create .details .tags-control {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    width: calc(40vw);
+}
+
+.create .details .tags-control div {
+    display: grid;
+    align-items: center;
+    width: calc(39vw);
+    height: calc(15vh);
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+    overflow: hidden;
+    overflow-y: scroll;
+    padding: 10px;
+    justify-content: center;
+    column-gap: 10px;
+    background: white;
+    border-radius: 20px 20px 0px 0px;
+}
+
+.create .details .tags-control div::-webkit-scrollbar {
+    width: 5px;
+}
+
+.create .details .tags-control div>p {
+    width: max-content;
+    padding: 10px;
+    border: 2px solid gray;
+    border-radius: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.create .details .tags-control div>p p {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 50px;
+    white-space: nowrap;
+    font-size: 14px;
+    color: rgb(128, 127, 127);
+    padding: 2px;
+}
+
+.create .details .tags-control div>p p:hover {
+    cursor: default;
+    color: rgb(62, 61, 61);
+}
+
+.create .details .tags-control input {
+    padding: 10px;
+    border-radius: 0px 0px 10px 10px;
+    border: 2px solid gray;
+    font-size: 15px;
+    outline: none;
+}
+
+.create .details .input-control {
+    position: relative;
+}
+
+.create .details .input-control div {
+    position: absolute;
+    background: white;
+    width: 32vw;
+    border: 2px solid black;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    row-gap: 10px;
+    max-height: 180px;
+    overflow: hidden;
+    overflow-y: scroll;
+    padding: 10px 0px;
+    border-radius: 10px 0px 0px 10px;
+    z-index: 2;
+    margin-left: 8px;
+}
+
+.create .details .input-control div::-webkit-scrollbar-thumb {
+    background: var(--BlurBetty);
+
+}
+
+.create .details .input-control div::-webkit-scrollbar {
+    width: 5px;
+}
+
+.create .details .input-control div p {
+    padding: 10px;
+    width: auto;
+    text-align: center;
+}
+
+.create .details .input-control div p:hover {
+    background: rgb(157, 155, 155);
+}
+
+.create .details .input-control input {
+    padding: 10px;
+    font-size: 15px;
+    border: 2px solid gray;
+    border-radius: 10px;
+    width: calc(80%);
+    position: relative;
+    left: 7px;
+    outline: none;
+}
+
+.create .details .tags-control div>p i {
+    border: 2px solid black;
+    border-radius: 50%;
+    padding: 2px;
+    position: relative;
+    left: -3px;
+    width: 30px;
+    height: 30px;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.create .details .tags-control div>p i:hover {
+    border: 2px solid cyan;
+    cursor: pointer;
+}
+
+.create .filters .tabs {
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 10px;
+    column-gap: 10px;
+}
+
+.create .filters .tabs p {
+    width: 16vw;
+    padding: 10px;
+    border: 2px solid black;
+    border-radius: 10px 10px 0 0;
+    border-bottom: none;
+}
+
+.create .filters .content {
+    border: 2px solid black;
+    width: 40vw;
+    position: absolute;
+    left: 10px;
+    height: 244px;
+    bottom: 0;
+    overflow: hidden;
+    overflow-y: scroll;
+    background: white;
+}
+
+.create .filters .content::-webkit-scrollbar {
+    width: 7px;
+}
+
+.create .filters .content::-webkit-scrollbar-thumb {
+    background-color: var(--BlurBetty);
+}
+
+.create .filters .content .adv-combination {
+    display: grid;
+    align-items: center;
+    overflow: hidden;
+    overflow-y: hidden;
+    row-gap: 10px;
+    padding: 20px;
+}
+
+.create .filters .content .basic-effects {
+    display: grid;
+    align-items: center;
+    overflow: hidden;
+    overflow-y: hidden;
+    row-gap: 10px;
+    padding: 20px;
+}
+
+.create .filters .content .basic-effects .range-control {
+    width: calc(100%);
+    position: relative;
+}
+
+.create .filters .content .basic-effects .range-control input {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+    width: calc(90%);
+}
+
+.create .filters .content .basic-effects .range-control input::-webkit-slider-runnable-track {
+    background: linear-gradient(to right, rgb(244, 63, 63), orange, yellow, rgb(72, 255, 0), rgb(6, 246, 6));
+    height: 0.5rem;
+}
+
+.create .filters .content .basic-effects .range-control input::-moz-range-track {
+    background: var(--BlurBetty);
+    height: 0.5rem;
+}
+
+.create .filters .content .basic-effects .range-control input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    margin-top: -5px;
+    background-color: var(--Sapphire);
+    height: 1rem;
+    width: 1rem;
+}
+
+.create .filters .content .basic-effects .range-control input:focus::-webkit-slider-thumb {
+    border: 1px solid black;
+    outline: 3px solid black;
+    outline-offset: 0.125rem;
+}
+
+.create .filters .content .basic-effects .range-control p {
+    font-size: 18px;
+}
+
+.create .filters .content .basic-effects .range-control p:last-child {
+    position: absolute;
+    right: 0;
+    top: 45%;
+}
+
+.create .filters {
+    grid-area: links;
+    position: relative;
+    height: 300px;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    background: var(--SpaceCadet);
+}
+
+.create .btn {
+    grid-area: btn;
+    height: 80px;
+    grid-template-columns: auto auto;
+    column-gap: 10vw;
+}
+
+.create .btn button {
+    width: 15vw;
+    height: 50px;
+    font-size: 18px;
+    border-radius: 30px;
+}
+
+.create .btn button:first-child {
+    background: var(--BlurBetty);
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.create .btn button:first-child div {
+    position: absolute;
+    right: 20px;
+    bottom: 18px;
+}
+
+.create .btn button:last-child {
+    background-color: var(--Diamond);
+}
+
+.create .btn button:hover {
+    border: 2px solid black;
+
+    outline: 2px solid black;
+    outline-offset: 10px;
+    transition: all 0.5s;
+}
+
+@media only screen and (max-width:785px) {
+    .create {
+        grid-template-areas: 'head head'
+            'caption caption'
+            'caption caption'
+            'post post'
+            'post post'
+            'details details'
+            'details details'
+            'links links'
+            'btn btn';
+        width: calc(96vw);
+        height: auto;
+        display: grid;
+        grid-gap: 10px;
+        justify-content: center;
+        overflow-y: hidden;
+        padding-bottom: 20px;
+    }
+
+    .create .details .tags-control div {
+        width: 80vw;
+    }
+
+    .create .post {
+        width: 50vw;
+    }
+
+    .create .post>div {
+        width: 85vw;
+    }
+
+    .create>div {
+        width: 90vw;
+    }
+
+    .create .post>div:first-child label img {
+        width: 200px;
+        height: 200px;
+    }
+
+    .create .post>div:first-child .display {
+        width: 100px;
+        height: 100px;
+    }
+
+    .create .filters .content {
+        border: 2px solid black;
+        width: 80vw;
+        position: absolute;
+        left: 10px;
+        height: 244px;
+        bottom: 0;
+        overflow: hidden;
+        overflow-y: scroll;
+        background: white;
+    }
+
+    .create .filters .tabs p {
+        width: max-content;
+        padding: 10px;
+        border: 2px solid black;
+        border-radius: 10px 10px 0 0;
+        border-bottom: none;
+    }
+
+    .create .post>div:first-child .display img {
+        width: 50vw;
+        height: 40vh;
+    }
+
+    .create .post>div:first-child .display {
+        width: 50vw;
+        height: 40vh;
+        display: grid;
+        justify-content: center;
+        align-items: center;
+        overflow: auto;
+        cursor: zoom-in;
+    }
+
+}
+
+@media only screen and (max-width:376px) {
+    .post {
+        min-width: 100vw;
+    }
+
+    .create {
+        grid-template-areas: 'head head'
+            'caption caption'
+            'caption caption'
+            'post post'
+            'post post'
+            'details details'
+            'details details'
+            'links links'
+            'btn btn';
+    }
+
+    .create>div {
+        width: 30em;
+    }
+}
+
+/*Explore Css*/
+.explore{
+    display: grid;
+    justify-content: center;
+    align-items: center;
+}
+.explore>div{
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    gap:20px;
+}
+.explore>div div{
+    display: flex;
+    flex-direction: row;
 }

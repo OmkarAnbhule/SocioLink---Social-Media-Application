@@ -1,34 +1,50 @@
-
 .Navbar {
-    width:100vw;
-    height: 80px;
-    background: lightblue;
-    margin: 0;
-    padding: 20px;
-    position: relative;
-    top: 0;
-    display: grid;
-  }
-  
-  .logo {
-    display: flex;
-    flex-direction: row;
-  }
-  
-  .logo h1 {
-    font-size: 50px;
-    letter-spacing: 2px;
-    font-family: 'Cookie', cursive;
-    padding-left: 10px;
-  }
-  
-  .logo .img {
-    border: 2px solid black;
-    padding: 10px;
-    width: 50px;
-    height: 50px;
-    margin-top: -4px;
-  }
-  @media only screen and (max-width:600px){
+  width: 100vw;
+  height: 80px;
+  background: lightblue;
+  margin: 0;
+  padding: 20px;
+  position: relative;
+  top: 0;
+  display: grid;
+}
 
-  }
+.Navbar .logo {
+  display: flex;
+  flex-direction: row;
+}
+
+.Navbar .logo h1 {
+  font-size: 50px;
+  letter-spacing: 2px;
+  font-family: 'Cookie', cursive;
+  padding-left: 10px;
+}
+
+.Navbar .logo .img {
+  border: 2px solid black;
+  padding: 10px;
+  width: 50px;
+  height: 50px;
+  margin-top: -4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
+
+.Navbar .profile {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  position: absolute;
+  right:40px;
+}
+.Navbar .profile img
+{
+  width: 50px;
+  border: 2px solid black;
+  border-radius:50%;
+  height:50px;
+}
+@media only screen and (max-width:600px) {}
