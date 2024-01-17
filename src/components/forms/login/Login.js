@@ -393,7 +393,7 @@ export default function Login(props) {
     seter2(err)
   }
   const register = () => {
-    window.location.href = '/'
+    navigate('/')
   }
 
   return (
@@ -467,7 +467,7 @@ export default function Login(props) {
     }
       <div className='register_link'>
         <p>
-          Already Have An Account<br /> <a onClick={register}>Click to SignUp</a>
+          Don't Have An Account<br /> <a onClick={register}>Click to SignUp</a>
         </p>
       </div>
       <div className='msg' style={{ display: msg.display }}>

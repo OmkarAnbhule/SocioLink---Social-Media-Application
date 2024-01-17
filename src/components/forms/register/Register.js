@@ -205,6 +205,7 @@ export default function Register() {
       settype('Success')
       setclicked('done')
       setclick("block")
+      localStorage.setItem('login','true')
       setTimeout(() => {
         navigate('/main', {
           state: {

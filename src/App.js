@@ -9,6 +9,7 @@ import Snack_bar from './components/web_components/snack_bar/Snack_bar';
 import Otp_form from './components/forms/otp/Otp_form';
 import CreatePost from './components/main/CreatePost'
 import Logout from './components/main/Logout';
+import Explore from './components/main/Explore';
 function App() {
 
   const callback = (data) => {
@@ -39,6 +40,7 @@ function App() {
             <Route path='/main' element={<Home />}></Route>
             <Route path='/:id/create' element={<CreatePost/>}></Route>
             <Route path='/logout' element={<Logout/>}></Route>
+            <Route path='/explore' element={<Explore/>}></Route>
           </Routes>
           </div>
         </BrowserRouter>

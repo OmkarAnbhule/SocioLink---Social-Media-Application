@@ -26,15 +26,7 @@ export default function Navbar() {
         getProfile()}
       },[])
       const getProfile = async () => {
-        let result = await fetch('http://localhost:5000/profile',{
-          method:'post',
-          body:JSON.stringify({email:id}),
-          headers:{
-            'Content-type':'application/json',
-          }
-        })
-        result = await result.json()
-        displayImage(result)
+        
       }
       const displayImage = (res) => {
         if(res.Response=='Success')
@@ -52,6 +44,11 @@ export default function Navbar() {
         }
       }
       const create = () => {
+        if(localStorage.getItem('Create') === 'True'){
+          localStorage.setItem('Create','False')
+          navigate('/main')
+        }
+        else{
         encrpyt()
         navigate(`/${EncryptedData.substring(1,5)}/create`,{
           state:{
@@ -61,6 +58,19 @@ export default function Navbar() {
           }
         })
         localStorage.setItem('key',EncryptedData.substring(1,5));
+        localStorage.setItem('Create','True')
+      }
+      }
+      const explore = () => {
+        if(localStorage.getItem('Explore') === 'True')
+        {
+          localStorage.setItem('Explore','False')
+          navigate('/main')
+        }
+        else{
+          navigate('/explore')
+          localStorage.setItem('Explore','True')
+        }
       }
       const secrePass = 'XkhZG4fW2t2W'
       const encrpyt = async () => {
@@ -84,6 +94,7 @@ export default function Navbar() {
                     <button onClick={logout}>Logout</button>
                     <button>Notify</button>
                     <button onClick={create}>Create Post</button>
+                    <button onClick={explore}>Explore</button>
                     <img src=''></img>
                     </div>
                     <div className='profile'>

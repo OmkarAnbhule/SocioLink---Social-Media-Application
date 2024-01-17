@@ -10,6 +10,7 @@ export default function Home() {
   const btn_id2 = useId();
   const [curr, setCurr] = useState(parseInt(localStorage.getItem('time')));
   const [pre, setPre] = useState(parseInt(localStorage.getItem('time')));
+  const [scrollTop,setScrollTop] = useState(0)
   let payload = {}
   // let ws = new WebSocket("ws://localhost:9000");
 
@@ -44,6 +45,14 @@ export default function Home() {
   }
   
   useEffect(() => {
+    handlePosts()
+    if(localStorage.getItem('Create') == 'True' || localStorage.getItem('Explore') === 'True')
+    {
+
+    }
+    else{
+
+    
     activity()
     const id = setTimeout(() => {
       if (curr > pre) {
@@ -56,10 +65,26 @@ export default function Home() {
           clearTimeout(id)
         }
       }
-    }, 1000 * 60 * 15)
+    }, 1000 * 60 * 30)
+  }
   }, [curr,pre])
 
-
+const handleScroll = (e) => {
+  setScrollTop(Math.ceil(e.currentTarget.scrollLeft))
+}
+const handleClickScroll = (i) =>{
+  document.getElementById('scroll').scrollLeft = i * 765
+}
+const handlePosts = async () => {
+  let result = await fetch('http://localhost:5000/get-posts',{
+    method:'post',
+    body:JSON.stringify({id:localStorage.getItem('id')}),
+    headers:{
+      'Content-Type':'application/json',
+    }
+  })
+  result = await result.json()
+}
 
   // socket config
   // ws.onmessage = message => {
@@ -103,7 +128,20 @@ export default function Home() {
             </div>
             <button><i className='bi bi-three-dots-vertical'></i></button>
           </div>
-          <div className='media'></div>
+          <div className='media'>
+            <div onScroll={handleScroll} id='scroll'>
+            <div style={{background:'red'}} id='0'>{scrollTop}</div>
+            <div style={{background:'blue'}} id='1'>{scrollTop}</div>
+            <div style={{background:'green'}} id='2'>{scrollTop}</div>
+            <div style={{background:'yellow'}} id='3'>{scrollTop}</div>
+            </div>
+            <div>
+              <p style={{background:scrollTop === 765 * 0 ? 'red' : 'black'}} onClick={()=>handleClickScroll(0)}></p>
+              <p style={{background:scrollTop === 765 * 1 ? 'red' : 'black'}} onClick={()=>handleClickScroll(1)}></p>
+              <p style={{background:scrollTop === 765 * 2 ? 'red' : 'black'}} onClick={()=>handleClickScroll(2)}></p>
+              <p style={{background:scrollTop === 765 * 3 ? 'red' : 'black'}} onClick={()=>handleClickScroll(3)}></p>
+            </div>
+          </div>
           <div className='media_btn'>
             <p>139495likes</p>
             <div>

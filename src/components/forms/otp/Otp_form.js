@@ -163,7 +163,7 @@ export default function Otp_form() {
                             let result = await fetch(
                                 'http://localhost:5000/login', {
                                 method: "post",
-                                body: JSON.stringify({ log_id, val: log_val, password: log_pass }),
+                                body: JSON.stringify({ text:log_id, val: log_val, password: log_pass }),
                                 headers: {
                                     'Content-Type': 'application/json'
                                 }
@@ -180,7 +180,7 @@ export default function Otp_form() {
                             let result = await fetch(
                                 'http://localhost:5000/login_sms', {
                                 method: "post",
-                                body: JSON.stringify({ log_id, val: log_val, password: log_pass }),
+                                body: JSON.stringify({ text:log_id, val: log_val, password: log_pass }),
                                 headers: {
                                     'Content-Type': 'application/json'
                                 }
@@ -392,9 +392,6 @@ export default function Otp_form() {
             timer()
             settype('Success')
             setmessage('Otp Sent Successfully')
-            setTimeout(() => {
-                navigate('/main', { state: { email: email } })
-            }, 2000)
         }
         else {
             settype('Warning')
@@ -463,7 +460,6 @@ export default function Otp_form() {
                                 if (result.Response == 'Success') {
                                 setmessage('Registration Successful')
                                 localStorage.setItem("id", email)
-                                localStorage.setItem('login', 'true')
                                 localStorage.setItem('time', Date.now())
                                 console.log('registered')
                                 setTimeout(() => {

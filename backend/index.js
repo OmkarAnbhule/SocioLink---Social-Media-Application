@@ -12,7 +12,9 @@ const client = require("twilio")(accountSid, authToken);
 const websocketServer = require("websocket").server
 const httpServer = http.createServer();
 const multer = require('multer')
-const fs = require('fs')
+
+
+// const cv = require('opencv4nodejs');
 httpServer.listen(9000, () => console.log("http server listening on port 9000"))
 const clients = {}
 const wsServer = new websocketServer({
@@ -22,7 +24,6 @@ function S4() {
 	return (((1 + Math.random()) * 0x10000) | 0).toString(32).substring(1);
 }
 const guid = () => (S4() + S4() + "-" + S4() + "-4" + S4());
-
 
 const UserSchema = new mongoose.Schema({
 	email: {
@@ -43,6 +44,15 @@ const UserSchema = new mongoose.Schema({
 		required: true,
 		unique: true
 	},
+	image: {
+		type: String,
+	},
+	followers:{
+		type:mongoose.Schema.Types.Mixed,
+	},
+	following:{
+		type:mongoose.Schema.Types.Mixed,
+	},
 	date: {
 		type: Date,
 		default: Date.now,
@@ -59,22 +69,45 @@ const logUsers = new mongoose.Schema({
 		default: Date.now,
 	}
 });
-const profileImage = new mongoose.Schema({
-	email: {
+
+
+const posts = new mongoose.Schema({
+	id: {
 		type: String,
 		required: true,
-		unique: true
 	},
-	image: {
+	caption: {
 		type: String,
-		unique: true
+	},
+	files: {
+		type: mongoose.Schema.Types.Mixed,
+	},
+	filters: {
+		type: mongoose.Schema.Types.Mixed,
+	},
+	location: {
+		type: String,
+	},
+	tags: {
+		type: String,
+	},
+	likes: {
+		type:mongoose.Schema.Types.Mixed,
+	},
+	comments:{
+		type:mongoose.Schema.Types.Mixed,
+	},
+	date: {
+		type: Date,
+		default: Date.now
 	}
 })
+const Post = mongoose.model('Posts', posts)
 const Log = mongoose.model('Login', logUsers)
 const User = mongoose.model('User', UserSchema);
-const profile_img = mongoose.model('Profile_Img', profileImage)
 User.createIndexes();
 Log.createIndexes();
+Post.createIndexes();
 
 // For backend and express
 const express = require('express');
@@ -121,10 +154,16 @@ app.post('/otp', async (req, resp) => {
 		} catch (error) {
 		}
 		const user = await User.create({ email, name, password: hashedPassword, username });
+		const login = await Log.create({log_id : email})
+		console.log(user,login)
+		let temp = await login.save()
 		let result = await user.save();
 		console.log(result)
 		result = result.toObject();
+		temp = temp.toObject()
 		if (result) {
+			console.log(temp)
+			delete temp.password;
 			delete result.password;
 			resp.send({ Response: "Success" });
 			console.log(result);
@@ -134,7 +173,7 @@ app.post('/otp', async (req, resp) => {
 		}
 	}
 	catch (e) {
-
+		console.log(e)
 	}
 })
 // login otp verify -email
@@ -307,7 +346,10 @@ app.post('/login', async (req, resp) => {
 				}
 			}
 		}
+		console.log(text, password, val)
+		console.log(existingUser)
 		if (existingUser) {
+			console.log(existingUser)
 			result = await bcrypt.compare(password, existingUser.password);
 			if (result) {
 
@@ -499,6 +541,7 @@ const storage = multer.diskStorage({
 		cb(null, uniqueSuffix + file.originalname)
 	}
 })
+
 const upload = multer({ storage: storage })
 // image upload
 app.post('/upload', upload.single('Image'), async (req, resp) => {
@@ -506,21 +549,9 @@ app.post('/upload', upload.single('Image'), async (req, resp) => {
 	const imageName = req.file.filename
 	const email = req.body.email
 	try {
-		const existingUser = profile_img.find({ email })
+		const existingUser = User.find({ email })
 		if (existingUser) {
-			const img = await profile_img.findOneAndUpdate({ email: email }, { image: imageName }, { new: true })
-			if (img) {
-				resp.send({ Response: 'Success' })
-			}
-			else {
-				resp.send({ Response: 'Failed' })
-			}
-		}
-		else {
-			const img = await profile_img.create({
-				image: imageName,
-				email: email
-			})
+			const img = await User.findOneAndUpdate({ email: email }, { image: imageName }, { new: true })
 			if (img) {
 				resp.send({ Response: 'Success' })
 			}
@@ -537,16 +568,137 @@ app.post('/upload', upload.single('Image'), async (req, resp) => {
 app.post('/profile', async (req, resp) => {
 	const { email } = req.body;
 	try {
-		const res = profile_img.findOne({ email: email }).then(res => {
+		const res = User.findOne({ email: email }).then(res => {
 			const data = res.toJSON()
-			resp.send({Response:'Success',data:data})
+			resp.send({ Response: 'Success', data: data })
 		})
+	}
+	catch (e) {
+		console.log(e)
+	}
+})
+
+// create-post
+
+const storagePost = multer.diskStorage({
+	destination: function (req, file, cb) {
+		cb(null, "../src/posts/");
+	},
+	filename: function (req, file, cb) {
+		const uniqueSuffix = guid();
+		cb(null, uniqueSuffix + file.originalname)
+	}
+})
+
+const uploadPost = multer({ storage: storagePost })
+
+app.post('/createPost', uploadPost.array('files'), async (req, resp) => {
+	try {
+		const { id, caption, location, tags } = req.body
+		const files = req.files.map((item, index) => ({
+			filename: item.filename,
+			filetype: item.filetype,
+			mimetype: item.mimetype,
+			size: item.size,
+		}))
+		const filters = JSON.parse(req.body.filters)
+		const existingUser = await User.find({ email: id })
+		if (existingUser) {
+			const post_create = await Post.create({
+				id: id,
+				location: location,
+				caption: caption,
+				tags: tags,
+				files: files,
+				filters: filters,
+			})
+			if (post_create) {
+				resp.send({ Response: 'Success' })
+			}
+			else {
+				resp.send({ Response: 'Failed' })
+			}
+		}
 
 	}
 	catch (e) {
 		console.log(e)
 	}
 })
+
+//get-posts
+app.post('/get-posts',async (req,resp)=>{
+	try{
+		console.log('get-post')
+		const existing_User = await User.find({email:req.body.id})
+		if(existing_User){
+			let arr = existing_User[0].following
+			let res = []
+			console.log(arr)
+			for (let i = 0 ; i< arr.length ; i ++)
+			{
+				let posts = await Post.find({id:arr[i]})
+				console.log(posts)
+				res[i] = posts
+			}
+			console.log(res)
+			resp.send({Response:'Success',data:res})
+		}
+	}
+	catch(e){
+		console.log(e)
+	}
+})
+app.post('/get-users',async(req,resp)=> {
+	console.log(req.body.id)
+	const res = await User.find({$or:[{username:{ $regex:'^'+req.body.target,$options:'i'}} ,{ name:{$regex:'^'+req.body.target,$options:'i'}}]}).exec()
+	if(res){
+	const res2 = await User.find({email:req.body.host})
+	console.log(res2)
+	resp.send({Response:'Success',data:res})
+	console.log(res)
+	}
+})
+
+app.post('/follow',async(req,resp)=>{
+	const {host,target} = req.body
+	const res = await User.findOneAndUpdate({email:host},{$push:{following:target}},{new:true})
+	const res2 = await User.findOneAndUpdate({email:target},{$push:{followers:host}},{new:true})
+	if(res){
+		resp.send({Response:'Success'})
+	}
+})
+
+
+//image-blur-effect
+// const blur_storage = multer.memoryStorage();
+// const blur_upload = multer({ storage: blur_storage });
+
+// function processImageBuffer(inputBuffer) {
+// 	const img = cv.imdecode(new Uint8Array(inputBuffer), cv.IMREAD_COLOR);
+// 	const faceClassifier = new cv.CascadeClassifier(cv.HAAR_FRONTALFACE_ALT2);
+// 	const grayImg = img.cvtColor(cv.COLOR_BGR2GRAY);
+// 	const faces = faceClassifier.detectMultiScale(grayImg).objects;
+// 	for (const rect of faces) {
+// 	  const roi = img.getRegion(rect);
+// 	  roi.blur(new cv.Size(25, 25));
+// 	}
+// 	const { buffer } = cv.imencode('.jpg', img);
+// 	const processedImgBuffer = Buffer.from(buffer);
+
+// 	return processedImgBuffer;
+//   }
+//   app.post('/blur_image', blur_upload.single('image'), (req, res) => {
+// 	try {
+// 	  const inputImageBuffer = req.file.buffer;
+// 	  const processedImageBuffer = processImageBuffer(inputImageBuffer);
+
+// 	  // Send the processed image buffer as a response
+// 	  res.send({img:processedImageBuffer})
+// 	} catch (error) {
+// 	  console.error('Error processing image:', error);
+// 	}
+//   });
 wsServer.on("request", request => {
 	//connect
 	const connection = request.accept(null, request.origin);
