@@ -1,16 +1,23 @@
-// To connect with your mongoDB database
-const mongoose = require('mongoose');
+require('dotenv').config()
+var mongoose = require('mongoose');
+mongoose.connect(process.env.MONGODB_URL).then(() => {
+	console.log('Database connected')
+});
 const bcrypt = require('bcrypt');
 const http = require("http");
 const otpGenerator = require('otp-generator');
-console.log(mongoose.connect('mongodb://127.0.0.1:27017/Sociolink'));
-const OTP = require('./otp/models/otp_model');
-const accountSid = "AC8d3462249d6464aaae2e656f66abd0df";
-const authToken = "48a7f4dd3ff30903c2af050bcb054555";
-const verifySid = "VA88e0afaa311f9bcbce64943219a727c8";
+const accountSid = process.env.TWILLO_ACCOUNT_SID;
+const authToken = process.env.TWILLO_AUTH_TOKEN;
+const verifySid = process.env.TWILLO_VERIFY_SID;
 const client = require("twilio")(accountSid, authToken);
 const websocketServer = require("websocket").server
 const httpServer = http.createServer();
+const express = require('express');
+const app = express();
+const cors = require("cors");
+console.log("App listen at port 5000");
+app.use(express.json());
+app.use(cors());
 const multer = require('multer')
 
 
@@ -25,183 +32,23 @@ function S4() {
 }
 const guid = () => (S4() + S4() + "-" + S4() + "-4" + S4());
 
-const UserSchema = new mongoose.Schema({
-	email: {
-		type: String,
-		required: true,
-		unique: true,
-	},
-	name: {
-		type: String,
-		required: true,
-	},
-	password: {
-		type: String,
-		required: true,
-	},
-	username: {
-		type: String,
-		required: true,
-		unique: true
-	},
-	image: {
-		type: String,
-	},
-	followers:{
-		type:mongoose.Schema.Types.Mixed,
-	},
-	following:{
-		type:mongoose.Schema.Types.Mixed,
-	},
-	date: {
-		type: Date,
-		default: Date.now,
-	},
-});
-const logUsers = new mongoose.Schema({
-	log_id: {
-		type: String,
-		required: true,
-		unique: true,
-	},
-	date: {
-		type: Date,
-		default: Date.now,
-	}
-});
-
-
-const posts = new mongoose.Schema({
-	id: {
-		type: String,
-		required: true,
-	},
-	caption: {
-		type: String,
-	},
-	files: {
-		type: mongoose.Schema.Types.Mixed,
-	},
-	filters: {
-		type: mongoose.Schema.Types.Mixed,
-	},
-	location: {
-		type: String,
-	},
-	tags: {
-		type: String,
-	},
-	likes: {
-		type:mongoose.Schema.Types.Mixed,
-	},
-	comments:{
-		type:mongoose.Schema.Types.Mixed,
-	},
-	date: {
-		type: Date,
-		default: Date.now
-	}
-})
-const Post = mongoose.model('Posts', posts)
-const Log = mongoose.model('Login', logUsers)
-const User = mongoose.model('User', UserSchema);
+const OTP = require('./otp/models/otp_model');
+const Post = require('./post/models/PostModel')
+const Log = require('./user/models/LoginUserModel');
+const User = require('./user/models/UserModel');
 User.createIndexes();
 Log.createIndexes();
 Post.createIndexes();
 
-// For backend and express
-const express = require('express');
-const app = express();
-const cors = require("cors");
-const { ConnectionClosedEvent } = require('mongodb');
-console.log("App listen at port 5000");
-app.use(express.json());
-app.use(cors());
 app.get("/", (req, resp) => {
 	resp.send("App is Working");
 });
-// send otp when registered
-app.post("/register", async (req, resp) => {
-	const { email } = req.body;
-	let otp = otpGenerator.generate(6, {
-		upperCaseAlphabets: false,
-		lowerCaseAlphabets: false,
-		specialChars: false,
-	});
-	let result = await OTP.findOne({ otp: otp });
-	while (result) {
-		otp = otpGenerator.generate(6, {
-			upperCaseAlphabets: false,
-		});
-		result = await OTP.findOne({ otp: otp });
-	}
-	const otpBody = await OTP.create({ email, otp });
-	resp.send({ Response: 'Success' })
-});
-//register otp verfiy - email
-app.post('/otp', async (req, resp) => {
-	try {
-		console.log('ok')
-		const { email, name, password, username, otp } = req.body;
-		const response = await OTP.find({ email }).sort({ createdAt: -1 }).limit(1);
-		if (response.length === 0 || otp !== response[0].otp) {
-			resp.send({ Response: 'Invalid' })
-		}
-		let hashedPassword;
-		try {
-			hashedPassword = await bcrypt.hash(password, 10);
-			console.log(hashedPassword)
-		} catch (error) {
-		}
-		const user = await User.create({ email, name, password: hashedPassword, username });
-		const login = await Log.create({log_id : email})
-		console.log(user,login)
-		let temp = await login.save()
-		let result = await user.save();
-		console.log(result)
-		result = result.toObject();
-		temp = temp.toObject()
-		if (result) {
-			console.log(temp)
-			delete temp.password;
-			delete result.password;
-			resp.send({ Response: "Success" });
-			console.log(result);
-		}
-		else {
-			resp.send({ Response: "something went wrong" });
-		}
-	}
-	catch (e) {
-		console.log(e)
-	}
-})
+
+
 // login otp verify -email
 app.post('/otp_login', async (req, resp) => {
 	console.log('otp_login')
-	const { log_id, otp } = req.body;
-	const response = await OTP.find({ email: log_id }).sort({ createdAt: -1 }).limit(1);
-	if (response.length === 0 || otp !== response[0].otp) {
-		resp.send({ Response: 'Invalid' })
-	} else {
-		try {
-			const user = await Log.create({ log_id });
-			let result = await user.save();
-			console.log(result)
-			result = result.toObject();
-			if (result) {
-				delete result.password;
-				resp.send({ Response: "Success" });
-				console.log(result);
-			}
-			else {
-				resp.send({ Response: "something went wrong" });
-			}
-		}
-		catch (e) {
-			console.log(e)
-		}
-	}
+	
 })
 // login otp verify - sms
 app.post('/otp_login_sms', async (req, resp) => {
@@ -627,45 +474,44 @@ app.post('/createPost', uploadPost.array('files'), async (req, resp) => {
 })
 
 //get-posts
-app.post('/get-posts',async (req,resp)=>{
-	try{
+app.post('/get-posts', async (req, resp) => {
+	try {
 		console.log('get-post')
-		const existing_User = await User.find({email:req.body.id})
-		if(existing_User){
+		const existing_User = await User.find({ email: req.body.id })
+		if (existing_User) {
 			let arr = existing_User[0].following
 			let res = []
 			console.log(arr)
-			for (let i = 0 ; i< arr.length ; i ++)
-			{
-				let posts = await Post.find({id:arr[i]})
+			for (let i = 0; i < arr.length; i++) {
+				let posts = await Post.find({ id: arr[i] })
 				console.log(posts)
 				res[i] = posts
 			}
 			console.log(res)
-			resp.send({Response:'Success',data:res})
+			resp.send({ Response: 'Success', data: res })
 		}
 	}
-	catch(e){
+	catch (e) {
 		console.log(e)
 	}
 })
-app.post('/get-users',async(req,resp)=> {
+app.post('/get-users', async (req, resp) => {
 	console.log(req.body.id)
-	const res = await User.find({$or:[{username:{ $regex:'^'+req.body.target,$options:'i'}} ,{ name:{$regex:'^'+req.body.target,$options:'i'}}]}).exec()
-	if(res){
-	const res2 = await User.find({email:req.body.host})
-	console.log(res2)
-	resp.send({Response:'Success',data:res})
-	console.log(res)
+	const res = await User.find({ $or: [{ username: { $regex: '^' + req.body.target, $options: 'i' } }, { name: { $regex: '^' + req.body.target, $options: 'i' } }] }).exec()
+	if (res) {
+		const res2 = await User.find({ email: req.body.host })
+		console.log(res2)
+		resp.send({ Response: 'Success', data: res })
+		console.log(res)
 	}
 })
 
-app.post('/follow',async(req,resp)=>{
-	const {host,target} = req.body
-	const res = await User.findOneAndUpdate({email:host},{$push:{following:target}},{new:true})
-	const res2 = await User.findOneAndUpdate({email:target},{$push:{followers:host}},{new:true})
-	if(res){
-		resp.send({Response:'Success'})
+app.post('/follow', async (req, resp) => {
+	const { host, target } = req.body
+	const res = await User.findOneAndUpdate({ email: host }, { $push: { following: target } }, { new: true })
+	const res2 = await User.findOneAndUpdate({ email: target }, { $push: { followers: host } }, { new: true })
+	if (res) {
+		resp.send({ Response: 'Success' })
 	}
 })
 
