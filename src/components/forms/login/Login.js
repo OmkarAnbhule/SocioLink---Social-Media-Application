@@ -6,6 +6,7 @@ import Snack_bar from '../../web_components/snack_bar/Snack_bar';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function Login(props) {
+  const api = process.env.REACT_APP_API_URL
   const { state } = useLocation();
   const [key, setkey] = useState(0);
   const [text, setText] = useState("");
@@ -22,7 +23,7 @@ export default function Login(props) {
   const navigate = useNavigate();
   const [header, setHeader] = useState('Sign In Form');
   const [fp_link, setFp_link] = useState('Forgot Password?')
-  const [btn,setBtn] = useState('Login')
+  const [btn, setBtn] = useState('Login')
   const [checkerstyle, setcheckerstyle] = useState({
     color: 'red',
     borderColor: 'rgb(118, 116, 116)',
@@ -119,7 +120,7 @@ export default function Login(props) {
   const getData2 = async () => {
     try {
       let result = await fetch(
-        'http://localhost:5000/reset_password', {
+        `${api}user/forgotPassword/resetPassword`, {
         method: "post",
         body: JSON.stringify({ text: state.id, password: password1 }),
         headers: {
@@ -136,9 +137,9 @@ export default function Login(props) {
   const getData1 = async () => {
     try {
       let result = await fetch(
-        'http://localhost:5000/forgot_password_otp', {
+        `${api}user/sendOTP`, {
         method: "post",
-        body: JSON.stringify({ text, val }),
+        body: JSON.stringify({ text, 'type': val }),
         headers: {
           'Content-Type': 'application/json'
         }
@@ -154,9 +155,9 @@ export default function Login(props) {
     if (val == 'number') {
       try {
         let result = await fetch(
-          'http://localhost:5000/login_sms', {
+          `${api}user/sendOTP`, {
           method: "post",
-          body: JSON.stringify({ text, password, val }),
+          body: JSON.stringify({ text, password, val, 'type': 'sms' }),
           headers: {
             'Content-Type': 'application/json'
           }
@@ -171,9 +172,9 @@ export default function Login(props) {
     else {
       try {
         let result = await fetch(
-          'http://localhost:5000/login', {
+          `${api}user/sendOTP`, {
           method: "post",
-          body: JSON.stringify({ text, password, val }),
+          body: JSON.stringify({ email:text, password, val, 'type': 'email' }),
           headers: {
             'Content-Type': 'application/json'
           }
@@ -197,7 +198,7 @@ export default function Login(props) {
         navigate('/otp', {
           state: {
             login: {
-              log_id: res.email,
+              log_id: text,
               log_val: val,
               log_pass: password
             }
@@ -461,10 +462,10 @@ export default function Login(props) {
         <p onClick={forgot_password}>{fp_link}</p>
       </div>
       {state && state.reset == true ?
-          <button className='btn' onClick={handleClick} >Reset Password <div><Loader display={click} /></div></button>
-:      <button className='btn' onClick={handleClick} >{btn} <div><Loader display={click} /></div></button>
-  
-    }
+        <button className='btn' onClick={handleClick} >Reset Password <div><Loader display={click} /></div></button>
+        : <button className='btn' onClick={handleClick} >{btn} <div><Loader display={click} /></div></button>
+
+      }
       <div className='register_link'>
         <p>
           Don't Have An Account<br /> <a onClick={register}>Click to SignUp</a>

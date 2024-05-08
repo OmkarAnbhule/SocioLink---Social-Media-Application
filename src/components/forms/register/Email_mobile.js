@@ -2,6 +2,7 @@ import { set } from 'mongoose';
 import React, { useEffect, useState } from 'react'
 
 export default function Email_mobile(props) {
+    const api = process.env.REACT_APP_API_URL;
     const [mobile, setmobile] = useState(false)
     const [Email, setEmail] = useState("");
     const [eicon, seteicon] = useState("");
@@ -13,7 +14,7 @@ export default function Email_mobile(props) {
         color: 'red'
     })
     const focusout = () => {
-        props.callBack(Email,checkerstyle.borderColor)
+        props.callBack(Email, checkerstyle.borderColor)
 
         if (Email == '') {
             setcheckerstyle({
@@ -54,9 +55,8 @@ export default function Email_mobile(props) {
         let email_valid = /^[a-z0-9]+@[a-z]+\.[a-z]{2,3}$/.test(temp);
         if (email_valid) {
             let result = await fetch(
-                'http://localhost:5000/email_valid', {
-                method: 'post',
-                body: JSON.stringify({ Email }),
+                `${api}user/verify/email/${Email}`, {
+                method: 'get',
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -98,9 +98,8 @@ export default function Email_mobile(props) {
             //number
             if (temp.match(/^\d{10}$/)) {
                 let result = await fetch(
-                    'http://localhost:5000/email_valid', {
-                    method: 'post',
-                    body: JSON.stringify({ Email }),
+                    `${api}user/verfiy/email${Email}`, {
+                    method: 'get',
                     headers: {
                         'Content-Type': 'application/json'
                     }
@@ -138,24 +137,23 @@ export default function Email_mobile(props) {
                 }
             }
             else {
-                if(Email == '')
-                {
-                seteicon("");
-                setcheckerstyle({
-                    borderColor: 'rgb(118, 116, 116)',
-                    outlineStyle: 'none',
-                    display: 'none',
-                    color: 'red'
-                })
-            }
-            else{
-                setcheckerstyle({
-                    borderColor: 'red',
-                    color: 'red',
-                    outlineStyle: 'none',
-                })
-                seteicon("bi bi-x-circle-fill");
-            }
+                if (Email == '') {
+                    seteicon("");
+                    setcheckerstyle({
+                        borderColor: 'rgb(118, 116, 116)',
+                        outlineStyle: 'none',
+                        display: 'none',
+                        color: 'red'
+                    })
+                }
+                else {
+                    setcheckerstyle({
+                        borderColor: 'red',
+                        color: 'red',
+                        outlineStyle: 'none',
+                    })
+                    seteicon("bi bi-x-circle-fill");
+                }
             }
         }
 

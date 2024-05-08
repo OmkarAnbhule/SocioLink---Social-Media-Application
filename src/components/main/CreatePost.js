@@ -5,6 +5,7 @@ import pip1 from '../../images/defaults/filters.jpg'
 import Loader from '../web_components/loader/Loader'
 
 export default function CreatePost() {
+    const api = process.env.REACT_APP_API_URL;
     const { state } = useLocation()
     const navigate = useNavigate()
     const isLoggedin = localStorage.getItem('login')
@@ -29,7 +30,7 @@ export default function CreatePost() {
     const [grayscale, setGrayscale] = useState(0)
     const [invert, setInvert] = useState(0)
     const [show, setShow] = useState(false)
-    const [isLoading,setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
     const [dropDown, setDropDown] = useState('block')
     const [filterArr, setFilterArr] = useState({});
     const dict = ['Bihar', 'Chhattisgarh', 'Maharashtra', 'Karnataka', 'Andhra Pradesh', 'Goa',
@@ -50,17 +51,9 @@ export default function CreatePost() {
             navigate('/login')
         }
         else {
-            verify_user()
         }
     }
-    const verify_user = () => {
-        const path = window.location.pathname
-        const part = path.slice(1, 5)
-        console.log(part)
-        if (part != localStorage.getItem('key')) {
-            navigate('/main')
-        }
-    }
+    
 
     const handleMouseDown = () => {
         setZooming(true)
@@ -77,12 +70,11 @@ export default function CreatePost() {
     const handleLocationChange = async (e) => {
         setLocation(e.target.value)
         setDropDown('block')
-        let result = await fetch('http://localhost:5000/fetch-location', {
+        let result = await fetch(`${api}fetch-location`, {
             method: 'post',
             body: JSON.stringify({ query: location }),
             headers: {
                 'Content-Type': 'application/json',
-
             }
         })
         result = await result.json()
@@ -253,7 +245,7 @@ export default function CreatePost() {
         try {
             const formData = FormData()
             formData.append('image', filteredFiles[0])
-            let result = await fetch('http://localhost:5000/blur_image', {
+            let result = await fetch(`${api}blur_image`, {
                 method: 'post',
                 body: formData,
             })
@@ -333,7 +325,7 @@ export default function CreatePost() {
         formData.append('caption', caption)
         formData.append('location', location)
         formData.append('tags', tagArr)
-        let result = await fetch('http://localhost:5000/createPost', {
+        let result = await fetch(`${api}post/createPost`, {
             method: 'post',
             body: formData
         })
@@ -341,19 +333,18 @@ export default function CreatePost() {
         displayResult(result)
     }
     const displayResult = (result) => {
-        if(result.Response=='Success')
-        {
+        if (result.Response == 'Success') {
             setIsLoading(false)
-            navigate('/main',{
-                state:{
-                    id:localStorage.getItem('id')
+            navigate('/main', {
+                state: {
+                    id: localStorage.getItem('id')
                 },
-                msg:{
-                    create:'Success'
+                msg: {
+                    create: 'Success'
                 }
             })
         }
-        else{
+        else {
 
         }
     }
@@ -467,7 +458,7 @@ export default function CreatePost() {
                         </div>
                     </div>
                 </div>)}
-            <div className='btn'><button onClick={handleSubmitPost}>Submit {isLoading ?<div> <Loader/></div> : null } </button> <button onClick={reset}>Clear</button></div>
+            <div className='btn'><button onClick={handleSubmitPost}>Submit {isLoading ? <div> <Loader /></div> : null} </button> <button onClick={reset}>Clear</button></div>
         </div>
     )
 }

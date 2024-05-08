@@ -18,7 +18,8 @@ mongoDb()
 app.get("/", (req, resp) => {
 	resp.send("App is Working");
 });
-app.use('/api/v1/auth', userRoute)
+
+app.use('/api/v1/user', userRoute)
 app.use('/api/v1/post', postRoute)
 
 
@@ -81,6 +82,6 @@ wsServer.on("request", request => {
 	connection.send(JSON.stringify(payLoad))
 })
 
-app.listen(5000 , ()=>{
+app.listen(5000, () => {
 	console.log('app is listening at http://localhost:5000');
 });

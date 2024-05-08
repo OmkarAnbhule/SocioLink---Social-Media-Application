@@ -1,10 +1,10 @@
-const OTP = require('./otp/models/otp_model');
+const OTP = require('../models/otp_model');
 const otpGenerator = require('otp-generator');
 const authToken = process.env.TWILLO_AUTH_TOKEN;
 const accountSid = process.env.TWILLO_ACCOUNT_SID;
 const verifySid = process.env.TWILLO_VERIFY_SID;
 const client = require("twilio")(accountSid, authToken);
-
+const mailSender = require('./mailSender')
 
 async function sendVerificationEmail(email, otp) {
     try {
@@ -44,7 +44,6 @@ exports.sendEmailOtp = async (email) => {
 exports.verifyEmailOtp = async (email, otp) => {
     const response = await OTP.find({ email }).sort({ createdAt: -1 }).limit(1);
     if (response.length === 0 || otp !== response[0].otp) {
-        resp.status(500).send({ Response: 'Invalid' })
         return false;
     }
     else {
@@ -56,7 +55,7 @@ exports.sendSMSOtp = async (email) => {
     const otpResponse = await client.verify.v2
         .services(verifySid)
         .verifications.create({ to: `+91${email}`, channel: "sms" })
-    if(otpResponse){
+    if (otpResponse) {
         return true;
     }
 }

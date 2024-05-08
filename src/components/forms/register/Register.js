@@ -9,6 +9,7 @@ import Snack_bar from '../../web_components/snack_bar/Snack_bar';
 import { useLocation, useNavigate } from 'react-router-dom';
 import pip from './default.png'
 export default function Register() {
+  const api = process.env.REACT_APP_API_URL;
   const { state } = useLocation();
   const [key, setkey] = useState(0)
   var clearEmail_mobile = null;
@@ -50,12 +51,11 @@ export default function Register() {
   function assignClearUsername(UsernameClearStateFunc) {
     clearUsername = UsernameClearStateFunc;
   };
-  useEffect(()=>{
-    if(localStorage.getItem('login') == 'true')
-    {
+  useEffect(() => {
+    if (localStorage.getItem('login') == 'true') {
       navigate('/main')
     }
-  },[])
+  }, [])
 
   function resetform() {
     clearEmail_mobile();
@@ -83,11 +83,6 @@ export default function Register() {
       }, 2000)
     }
     else {
-      resetform();
-      setemail("");
-      setname("");
-      setpassword("");
-      setusername("");
       setclick("none")
       setmsg({
         display: 'block'
@@ -103,16 +98,15 @@ export default function Register() {
     if (email_valid) {
       try {
         let result = await fetch(
-          'http://localhost:5000/register', {
+          `${api}user/sendOTP`, {
           method: "post",
-          body: JSON.stringify({ email }),
+          body: JSON.stringify({ email, 'type': 'email' }),
           headers: {
             'Content-Type': 'application/json'
           }
         })
         result = await result.json()
         res(result);
-
       }
       catch (e) {
         console.log('error')
@@ -121,9 +115,9 @@ export default function Register() {
     else {
       try {
         let result = await fetch(
-          'http://localhost:5000/sms', {
+          `${api}user/sendOTP`, {
           method: "post",
-          body: JSON.stringify({ email }),
+          body: JSON.stringify({ email, 'type': 'sms' }),
           headers: {
             'Content-Type': 'application/json'
           }
@@ -184,7 +178,7 @@ export default function Register() {
       const formdata = new FormData();
       formdata.append('Image', Image)
       formdata.append('email', localStorage.getItem('id'))
-      let result = await fetch('http://localhost:5000/upload', {
+      let result = await fetch(`${api}user/uploadImage`, {
         method: 'post',
         body: formdata,
       })
@@ -205,7 +199,7 @@ export default function Register() {
       settype('Success')
       setclicked('done')
       setclick("block")
-      localStorage.setItem('login','true')
+      localStorage.setItem('login', 'true')
       setTimeout(() => {
         navigate('/main', {
           state: {
@@ -214,17 +208,15 @@ export default function Register() {
         })
       }, 2000)
     }
-    else
-    {
-      if(res.Response == 'Failed')
-      {
+    else {
+      if (res.Response == 'Failed') {
         setmsg({
-        display: 'block'
-      })
-      setmessage('Upload Failed Try Again')
-      settype('Failed')
-      setclicked('done')
-      setclick("block")
+          display: 'block'
+        })
+        setmessage('Upload Failed Try Again')
+        settype('Failed')
+        setclicked('done')
+        setclick("block")
       }
     }
   }
@@ -259,7 +251,7 @@ export default function Register() {
       const formdata = new FormData();
       formdata.append('Image', ImageFile)
       formdata.append('email', localStorage.getItem('id'))
-      let result = await fetch('http://localhost:5000/upload', {
+      let result = await fetch(`${api}user/uploadImage`, {
         method: 'post',
         body: formdata,
       })

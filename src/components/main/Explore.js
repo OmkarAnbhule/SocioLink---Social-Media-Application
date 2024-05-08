@@ -1,60 +1,82 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
+
 export default function Explore() {
-    const [Search,setSearch] = useState(null)
-    const [path,setPath] = useState(null)
-    const [user,setUser] = useState([])
+    const api = process.env.REACT_APP_API_URL;
+    const [search, setSearch] = useState('');
+    const [user, setUser] = useState([]);
+
+    useEffect(() => {
+        const delaySearch = setTimeout(() => {
+            if (search.trim() !== '') {
+                getData();
+            } else {
+                setUser([]);
+            }
+        }, 1000); // Adjust delay time as needed (in milliseconds)
+
+        return () => clearTimeout(delaySearch); // Cleanup function to clear timeout on component unmount
+    }, [search]);
+
     const handleSearch = (e) => {
-        setSearch(e.target.value)
-    } 
-    useEffect(()=>{
-        getData()
-    },[Search])
+        setSearch(e.target.value);
+    };
+
     const getData = async () => {
-        let result = await fetch('http://localhost:5000/get-users',{
-            method:'post',
-            body:JSON.stringify({host:localStorage.getItem('id'),target:Search}),
-            headers:{
-                'Content-Type':'application/json',
-            }
-        })
-        result = await result.json()
-        display(result)
-    }
+        try {
+            const result = await fetch(`${api}user/get-users/${localStorage.getItem('id')}/${search}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            const data = await result.json();
+            display(data);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
     const display = (res) => {
-            if(Search === '' || Search === null){
-                setUser([])
-            }else{
-            console.log(res.data)
-            setUser(Object.entries(res.data))
-            console.log(user)
-            }
-    } 
+        if (res && res.data) {
+            setUser(Object.entries(res.data).filter(([key, value]) => value.email !== localStorage.getItem('id')));
+        } else {
+            setUser([]);
+        }
+    };
+
     const handleFollow = async (target) => {
-        let result = await fetch('http://localhost:5000/follow',{
-            method:'post',
-            body:JSON.stringify({host:localStorage.getItem('id'),target}),
-            headers:{
-                'Content-Type':'application/json',
-            }
-        })
-        result = await result.json()
-    }
-  return (
-    <div className='explore'>
-        <p>{Search}</p>
-        <input type='text' onChange={handleSearch} value={Search}></input>
-        <div>
-            {user.length != 0 ? (
-                user.map((item,index)=>(
-                    item[1].email == localStorage.getItem('id') ? null :
-                    (<div key={index}>
-                    <img width={50} height={50} src={require(`../../images/profile/${item[1].image}`)}></img>
-                    <p>{item[1].username}</p>
-                    <button onClick={()=>handleFollow(item[1].email)}>Follow</button>
-                    </div>)
-                ))):null
-            }
+        try {
+            const result = await fetch(`${api}user/followUser`, {
+                method: 'POST',
+                body: JSON.stringify({ host: localStorage.getItem('id'), target }),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            const data = await result.json();
+            // Handle follow response as needed
+        } catch (error) {
+            console.error('Error following user:', error);
+        }
+    };
+
+    return (
+        <div className='explore'>
+            <p>{search}</p>
+            <input type='text' onChange={handleSearch} value={search} />
+            <div>
+                {user.length !== 0 ? (
+                    user.map(([key, item], index) => (
+                        <div key={index}>
+                            <img width={50} height={50} src={require(`../../images/profile/${item.image}`)} alt={item.username} />
+                            <p>{item.username}</p>
+                            <button onClick={() => handleFollow(item.email)}>Follow</button>
+                        </div>
+                    ))
+                ) : null}
+            </div>
         </div>
-    </div>
-  )
+    );
 }

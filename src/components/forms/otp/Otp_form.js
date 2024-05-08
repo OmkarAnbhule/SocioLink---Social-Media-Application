@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Snack_bar from '../../web_components/snack_bar/Snack_bar';
 import Login from '../login/Login';
 export default function Otp_form() {
+    const api = process.env.REACT_APP_API_URL;
     const { state } = useLocation();
     const { email, name, username, password } = state;
     const navigate = useNavigate();
@@ -129,11 +130,10 @@ export default function Otp_form() {
                 let email_valid = /^[a-z0-9]+@[a-z]+\.[a-z]{2,3}$/.test(fp_email);
                 if (email_valid) {
                     try {
-                        console.log('yup1')
                         let result = await fetch(
-                            'http://localhost:5000/forgot_password_otp', {
+                            `${api}user/sendOTP`, {
                             method: "post",
-                            body: JSON.stringify({ text: fp_email, val: fp_val }),
+                            body: JSON.stringify({ email: fp_email, 'type': fp_val }),
                             headers: {
                                 'Content-Type': 'application/json'
                             }
@@ -159,11 +159,10 @@ export default function Otp_form() {
                     let email_valid = /^[a-z0-9]+@[a-z]+\.[a-z]{2,3}$/.test(log_id);
                     if (email_valid) {
                         try {
-                            console.log('yup1')
                             let result = await fetch(
-                                'http://localhost:5000/login', {
+                                `${api}user/sendOTP`, {
                                 method: "post",
-                                body: JSON.stringify({ text:log_id, val: log_val, password: log_pass }),
+                                body: JSON.stringify({ email: log_id, 'type': 'email' }),
                                 headers: {
                                     'Content-Type': 'application/json'
                                 }
@@ -176,11 +175,10 @@ export default function Otp_form() {
                     }
                     else {
                         try {
-                            console.log('yup1')
                             let result = await fetch(
-                                'http://localhost:5000/login_sms', {
+                                `${api}user/sendOTP`, {
                                 method: "post",
-                                body: JSON.stringify({ text:log_id, val: log_val, password: log_pass }),
+                                body: JSON.stringify({ email: log_id, 'type': 'sms' }),
                                 headers: {
                                     'Content-Type': 'application/json'
                                 }
@@ -197,11 +195,10 @@ export default function Otp_form() {
                 let email_valid = /^[a-z0-9]+@[a-z]+\.[a-z]{2,3}$/.test(email);
                 if (email_valid) {
                     try {
-                        console.log('yup1')
                         let result = await fetch(
-                            'http://localhost:5000/register', {
+                            `${api}user/sendOTP`, {
                             method: "post",
-                            body: JSON.stringify({ email }),
+                            body: JSON.stringify({ email, 'type': 'email' }),
                             headers: {
                                 'Content-Type': 'application/json'
                             }
@@ -215,11 +212,10 @@ export default function Otp_form() {
 
                 else {
                     try {
-                        console.log('yup1')
                         let result = await fetch(
-                            'http://localhost:5000/sms', {
+                            `${api}user/sendOTP`, {
                             method: "post",
-                            body: JSON.stringify({ email }),
+                            body: JSON.stringify({ email, 'type': 'sms' }),
                             headers: {
                                 'Content-Type': 'application/json'
                             }
@@ -249,7 +245,7 @@ export default function Otp_form() {
                     try {
                         console.log('yup')
                         let result = await fetch(
-                            'http://localhost:5000/validate_otp', {
+                            `${api}user/forgotPassword/validateOtp`, {
                             method: "post",
                             body: JSON.stringify({ val: fp_val, text: fp_email, otp }),
                             headers: {
@@ -274,11 +270,10 @@ export default function Otp_form() {
                         let email_valid = /^[a-z0-9]+@[a-z]+\.[a-z]{2,3}$/.test(log_id);
                         if (email_valid) {
                             try {
-                                console.log('yup')
                                 let result = await fetch(
-                                    'http://localhost:5000/otp_login', {
+                                    `${api}user/login`, {
                                     method: "post",
-                                    body: JSON.stringify({ log_id, otp }),
+                                    body: JSON.stringify({ log_id, otp, 'type': 'email' }),
                                     headers: {
                                         'Content-Type': 'application/json'
                                     }
@@ -293,9 +288,9 @@ export default function Otp_form() {
                             try {
                                 console.log('yup')
                                 let result = await fetch(
-                                    'http://localhost:5000/otp_login_sms', {
+                                    `${api}user/login`, {
                                     method: "post",
-                                    body: JSON.stringify({ log_id, otp }),
+                                    body: JSON.stringify({ log_id, otp, 'type': 'sms' }),
                                     headers: {
                                         'Content-Type': 'application/json'
                                     }
@@ -312,11 +307,10 @@ export default function Otp_form() {
                     let email_valid = /^[a-z0-9]+@[a-z]+\.[a-z]{2,3}$/.test(email);
                     if (email_valid) {
                         try {
-                            console.log('yup')
                             let result = await fetch(
-                                'http://localhost:5000/otp', {
+                                `${api}user/create`, {
                                 method: "post",
-                                body: JSON.stringify({ email, name, password, username, otp }),
+                                body: JSON.stringify({ email, name, password, username, otp, 'type': 'email' }),
                                 headers: {
                                     'Content-Type': 'application/json'
                                 }
@@ -331,9 +325,9 @@ export default function Otp_form() {
                         try {
                             console.log('yup')
                             let result = await fetch(
-                                'http://localhost:5000/otp_sms', {
+                                `${api}user/create`, {
                                 method: "post",
-                                body: JSON.stringify({ email, name, password, username, otp }),
+                                body: JSON.stringify({ email, name, password, username, otp, "type": 'sms' }),
                                 headers: {
                                     'Content-Type': 'application/json'
                                 }
@@ -454,20 +448,21 @@ export default function Otp_form() {
                                 setTimeout(() => {
                                     navigate('/main', { state: { email: log_id } })
                                 }, 2000)
-                            }}
                             }
-                            else {
-                                if (result.Response == 'Success') {
-                                setmessage('Registration Successful')
-                                localStorage.setItem("id", email)
-                                localStorage.setItem('time', Date.now())
-                                console.log('registered')
-                                setTimeout(() => {
-                                    navigate('/', { state: { file: 'true' } })
-                                }, 2000)
-                            }
-                            }
-                    
+                        }
+                    }
+                    else {
+                        if (result.Response == 'Success') {
+                            setmessage('Registration Successful')
+                            localStorage.setItem("id", email)
+                            localStorage.setItem('time', Date.now())
+                            console.log('registered')
+                            setTimeout(() => {
+                                navigate('/', { state: { file: 'true' } })
+                            }, 2000)
+                        }
+                    }
+
                 }
             }
         }

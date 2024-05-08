@@ -76,6 +76,7 @@
     display: grid;
     align-items: center;
     box-shadow: 0px 0px 5px 5px rgb(201, 205, 212);
+    position: relative;
 }
 
 .home .body .post .head {
@@ -112,36 +113,62 @@
 }
 
 .home .body .post .media {
-    width: calc(100%);
-    height: 400px;
+    width: 50vw;
+    margin: 0 auto;
+    height: 500px;
     display: grid;
-    justify-content: center;
-    align-items: center;
+    place-items: center;
+    position: relative;
 }
 
 .home .body .post .media>div:first-child {
     width: 50vw;
-    height: 50vh;
+    height: 100%;
     border: 2px solid black;
     display: flex;
     flex-wrap: nowrap;
     overflow: hidden;
     overflow-x: scroll;
-    overflow-y: hidden;
     scroll-snap-type: x mandatory;
-    margin: auto;
+    margin: 0;
+
 }
+
+.home .body .post .media>div:first-child::-webkit-scrollbar {
+    display: none;
+}
+
 
 .home .body .post .media>div:first-child:-webkit-scrollbar {
     display: none;
 }
 
 .home .body .post .media>div:first-child div {
-    border: 2px solid red;
     width: 100%;
     flex-shrink: 0;
     aspect-ratio: 1/1;
     scroll-snap-align: center;
+    display: grid;
+    position: relative;
+    place-items: center;
+    background: rgb(47, 47, 47);
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    .btn-volume {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: 2px solid rgba(255, 255, 255, 0.43);
+        background: rgba(255, 255, 255, 0.43);
+    }
 }
 
 .home .body .post .media>div:last-child {
@@ -149,36 +176,36 @@
     display: flex;
     justify-content: center;
     column-gap: 20px;
+    position: absolute;
+    bottom: 10px;
 }
 
 .home .body .post .media>div:last-child p {
     width: 10px;
     height: 10px;
-    border: 2px solid black;
+    border: 2px solid rgba(255, 255, 255, 0.43);
     border-radius: 50%;
-    background: black;
+    background: rgba(255, 255, 255, 0.43);
 }
 
 .home .body .post .media_btn {
     border-bottom: 2px solid rgb(154, 150, 150);
     border-top: 2px solid rgb(154, 150, 150);
-    height: 30px;
+    height: max-content;
     width: calc(100%);
-    display: flex;
-    flex-direction: row;
-    position: relative;
-    padding-left: 10px;
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-areas: 'start end';
+    padding: 10px;
 }
 
 .home .body .post .media_btn div {
-    position: absolute;
-    right: 10px;
     column-gap: 10px;
     display: flex;
     flex-direction: row;
-    bottom: 3px;
     align-items: center;
-    justify-content: center;
+    justify-content: end;
+    margin: 0;
 }
 
 .home .body .post .media_btn div button {
@@ -187,13 +214,221 @@
 }
 
 .home .body .post .media_btn div button i {
-    font-size: medium;
+    font-size: large;
 }
 
 .home .body .post .foot {
     width: calc(100%);
-    height: 60px;
+    min-height: 60px;
+    height: auto;
+
+    .caption {
+        width: 100%;
+        height: max-content;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        padding: 0 20px;
+        text-overflow: ellipsis;
+        margin-top: 5px;
+    }
+
+    .tags {
+        width: 100%;
+        height: max-content;
+        display: flex;
+        margin: 20px 0px;
+        padding: 0 20px;
+        column-gap: 10px;
+
+        p {
+            text-overflow: ellipsis;
+            width: 50px;
+            height: max-content;
+            white-space: nowrap;
+            overflow: hidden;
+            transition: all .5s;
+            cursor: default;
+
+            &:hover {
+                width: max-content;
+                margin: 0px 5px;
+            }
+        }
+    }
 }
+
+.home .body .post .comment-section {
+    border: 2px solid gray;
+    width: 100%;
+    max-height: 530px;
+    padding: 10px;
+    height: auto;
+    min-height: max-content;
+    position: absolute;
+    z-index: 1;
+    background: white;
+    bottom: 132px;
+    transform: scaleY(0);
+    transform-origin: 100% 100%;
+    opacity: 0;
+    transition:all .5s ease-in;
+
+    &::-webkit-scrollbar-button{
+        width:5px;
+    }
+    &::-webkit-scrollbar-thumb{
+        width:5px;
+        background: red;
+    }
+    &::-webkit-scrollbar{
+        width:5px;
+        appearance:none;
+    }
+    &::-webkit-scrollbar-track{
+        width:5px;
+    }
+
+    .comments-scroll{
+        overflow: hidden;
+        overflow-y:scroll;
+        height: 400px;
+    }
+
+    .reply-show-btn{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width:70%;
+        margin-bottom: 10px;
+        margin-top: -5px;
+        padding:0;
+        button{
+            border:none;
+            background: none;
+            margin: 0;
+            padding: 0;
+            &:hover{
+                border-bottom: 3px solid rgb(70, 70, 246);
+            }
+        }
+    }
+    .comment-input-section {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding-top: 5px;
+
+        input {
+            width: 85%;
+            height: 40px;
+            outline: rgb(140, 140, 243);
+            padding: 5px;
+        }
+
+        button {
+            background: #63a0fc;
+            border-radius: 20px;
+            width: 100px;
+            height: 40px;
+            margin-left: 5px;
+            border: 2px solid blue;
+
+            &:hover {
+                background: #142D55;
+                color: white;
+                transition: all .5s;
+            }
+        }
+    }
+
+    .comment {
+        display: flex;
+        width: 70%;
+        position: relative;
+        min-height: 60px;
+        height: auto;
+        align-items: end;
+        position: relative;
+        border: 2px solid rgb(171, 169, 169);
+        padding-top: 20px;
+        padding-left: 5px;
+        padding-right: 31.5px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+
+        .username {
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            position: absolute;
+            top: 5px;
+            width: 80px;
+            font-weight: 600;
+            font-size: 15px;
+            padding: 0px 5px;
+        }
+
+        .text {
+            color: gray;
+            margin: 5px;
+        }
+
+        button {
+            background: none;
+            width: max-content;
+            margin: 0 auto;
+            padding: 0;
+            position: absolute;
+            cursor: pointer;
+            bottom: 5px;
+            padding: 3px;
+            border: none;
+            outline: none;
+
+            &.btn-like {
+                right: 4px;
+            }
+
+            &.btn-reply {
+                right: 40px;
+
+                &:hover {
+                    border-bottom: 4px solid cyan;
+                }
+            }
+        }
+    }
+
+    .reply-input {
+        input {
+            width: 60%;
+            height: 40px;
+            outline: rgb(140, 140, 243);
+            padding: 5px;
+        }
+
+        button {
+            background: #63a0fc;
+            border-radius: 20px;
+            min-width: 100px;
+            min-height: 40px;
+            width: max-content;
+            height: max-content;
+            margin-left: 5px;
+            border: 2px solid blue;
+
+            &:hover {
+                background: #142D55;
+                color: white;
+                transition: all .5s;
+            }
+        }
+    }
+}
+
+
+
+
 
 @media only screen and (max-width:600px) {
     .home {
@@ -790,18 +1025,20 @@ video {
 }
 
 /*Explore Css*/
-.explore{
+.explore {
     display: grid;
     justify-content: center;
     align-items: center;
 }
-.explore>div{
+
+.explore>div {
     display: grid;
     justify-content: center;
     align-items: center;
-    gap:20px;
+    gap: 20px;
 }
-.explore>div div{
+
+.explore>div div {
     display: flex;
     flex-direction: row;
 }

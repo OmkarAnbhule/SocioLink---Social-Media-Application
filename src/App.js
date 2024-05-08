@@ -38,7 +38,7 @@ function App() {
             <Route path='/otp' element={<Otp_form/>}></Route>
             <Route path='/login' element={<Login />}></Route>
             <Route path='/main' element={<Home />}></Route>
-            <Route path='/:id/create' element={<CreatePost/>}></Route>
+            <Route path='/create' element={<CreatePost/>}></Route>
             <Route path='/logout' element={<Logout/>}></Route>
             <Route path='/explore' element={<Explore/>}></Route>
           </Routes>

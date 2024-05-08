@@ -6,7 +6,8 @@
   padding: 20px;
   position: relative;
   top: 0;
-  display: grid;
+  display: flex;
+  align-items: center;
 }
 
 .Navbar .logo {
@@ -32,6 +33,25 @@
   justify-content: center;
 
 }
+
+.Navbar .btn-group{
+  border:2px solid;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  column-gap: 20px;
+}
+
+.Navbar .btn-group button{
+  background: rgb(95, 184, 253);
+  outline: none;
+  border:none;
+  width:200px;
+  font-size: medium;
+}
+
+
 
 .Navbar .profile {
   display: flex;
