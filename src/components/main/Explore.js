@@ -39,7 +39,7 @@ export default function Explore() {
 
     const display = (res) => {
         if (res && res.data) {
-            setUser(Object.entries(res.data).filter(([key, value]) => value.email !== localStorage.getItem('id')));
+            setUser(Object.entries(res.data).filter(([key, value]) => value._id !== localStorage.getItem('id')));
         } else {
             setUser([]);
         }
@@ -72,7 +72,7 @@ export default function Explore() {
                         <div key={index}>
                             <img width={50} height={50} src={require(`../../images/profile/${item.image}`)} alt={item.username} />
                             <p>{item.username}</p>
-                            <button onClick={() => handleFollow(item.email)}>Follow</button>
+                            <button onClick={() => handleFollow(item._id)}>Follow</button>
                         </div>
                     ))
                 ) : null}

@@ -19,7 +19,11 @@ const uploadPost = multer({ storage: storagePost })
 
 app.post('/createPost', uploadPost.array('files'), postController.createPost);
 app.get('/get-posts/:id', postController.getAllPost);
+app.get('/get-post/:id', postController.getPost);
 app.post('/addComment', postController.addComment);
 app.get('/get-comments/:id', postController.getComments);
-app.put('/like-comment',postController.likeComment);
+app.put('/like-comment', postController.likeComment);
+app.delete('/delete-comment/:id/:level', postController.deleteComment);
+app.put('/:id/like/:type/:user', postController.likePost);
+app.delete('/deletePost/:id', postController.deletePost);
 module.exports = app

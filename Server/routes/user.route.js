@@ -32,6 +32,7 @@ app.post('/uploadImage', upload.single('Image'), userController.imageUpload);
 app.get('/getProfile/:id', userController.getProfile);
 app.get('/get-users/:host/:target', userController.getUsers);
 app.post('/followUser', userController.follow);
+app.post('/unfollowUser', userController.unfollow);
 
 
 

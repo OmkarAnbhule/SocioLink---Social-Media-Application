@@ -2,6 +2,7 @@ import React, { useEffect, useId, useRef, useState } from 'react'
 import './style.css'
 import { useLocation, useNavigate } from 'react-router-dom'
 import Post from './post/Post';
+import Loader from '../web_components/loader/Loader'
 
 export default function Home() {
   const api = process.env.REACT_APP_API_URL;
@@ -41,7 +42,12 @@ export default function Home() {
     })
   }
   useEffect(() => {
-    handlePosts()
+    const id = setInterval(() => {
+      handlePosts()
+    }, 2000);
+    return () => {
+      clearInterval(id)
+    }
   }, [])
 
   useEffect(() => {
@@ -114,9 +120,12 @@ export default function Home() {
       </div>
       <div className='body'>
         {
-          posts && posts.map((item, index) => (
-            <Post key={index} data={item} />
-          ))
+          posts && posts.length > 0 ?
+            posts && posts.map((item, index) => (
+              <Post key={index} data={item} />
+            ))
+            :
+            <Loader display={'block'} background={true} width={'60px'} height={'60px'} />
         }
       </div>
     </div>

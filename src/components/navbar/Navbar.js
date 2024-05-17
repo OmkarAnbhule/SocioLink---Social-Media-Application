@@ -69,6 +69,7 @@ export default function Navbar() {
       navigate(path)
     }
   }
+
   const explore = () => {
     if (localStorage.getItem('Explore') === 'True') {
       localStorage.setItem('Explore', 'False')
@@ -97,6 +98,7 @@ export default function Navbar() {
             <img src=''></img>
           </div>
           <div className='profile'>
+            <button onClick={handleNavigate('chats')}>Chat</button>
             {img != '' ? (<img src={require('../../images/profile/' + img)}></img>) : null}
           </div>
         </>

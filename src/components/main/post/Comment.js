@@ -64,6 +64,18 @@ export default function Comment({ comments, index, level }) {
         }
     }
 
+    const handleDelete = async()=> {
+        let result = await fetch(`${api}post/delete-comment/${comments._id}/${level}`, {
+            method: 'delete',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        result = await result.json();
+        if (result.Response == 'Success') {
+        }
+    }
+
     const handleLike = async () => {
         if (!isLike) {
             let result = await fetch(`${api}post/like-comment`, {
@@ -82,6 +94,7 @@ export default function Comment({ comments, index, level }) {
             result = await result.json();
             if (result.Response == 'Success') {
                 setIsLike(true);
+                comments.likeCount++;
             }
         }
         else {
@@ -100,7 +113,8 @@ export default function Comment({ comments, index, level }) {
             })
             result = await result.json();
             if (result.Response == 'Success') {
-                setIsLike(true);
+                setIsLike(false);
+                comments.likeCount--;
             }
         }
     }
@@ -121,8 +135,12 @@ export default function Comment({ comments, index, level }) {
             <div style={{ marginLeft: margin + 'px' }} className='comment'>
                 <p className='username'>{comments.username}&nbsp;<small style={{ fontSize: '12px' }}>{time}</small></p>
                 <p className='text'>{comments.comment}</p>
-                <button className='btn-reply' onClick={handleReplyShow}>Reply</button>
-                <button className='btn-like' onClick={handleLike} style={{ color: isLike ? 'red' : 'black' }}><i className={isLike ? 'bi bi-heart-fill' : 'bi bi-heart'}></i></button>
+                <div className='btn-grp'>
+                    <button className='btn-reply' onClick={handleReplyShow}>Reply</button>
+                    <button className='btn-like' onClick={handleLike} style={{ color: isLike ? 'red' : 'black' }}><i className={isLike ? 'bi bi-heart-fill' : 'bi bi-heart'}></i><p className='like-count'>{comments.likeCount == 0 && !isLike ? '' : comments.likeCount}</p></button>
+                    <button className='btn-delete' onClick={handleDelete}><i className='bi bi-trash-fill'></i></button>
+                </div>
+
             </div>
             {
                 comments.isReply && !isShowReply && comments.replyCount > 0 ? (

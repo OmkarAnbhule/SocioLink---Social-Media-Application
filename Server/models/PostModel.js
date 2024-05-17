@@ -20,11 +20,16 @@ const posts = new mongoose.Schema({
 	tags: {
 		type: String,
 	},
-	likes: {
-		type:mongoose.Schema.Types.Mixed,
+	likeCount: {
+		type: Number,
+		default: 0
 	},
-	comments:{
-		type:mongoose.Schema.Types.Mixed,
+	likedUsers: [{
+		type: String,
+		
+	}],
+	comments: {
+		type: mongoose.Schema.Types.Mixed,
 	},
 	date: {
 		type: Date,
@@ -32,4 +37,4 @@ const posts = new mongoose.Schema({
 	}
 })
 
-module.exports = mongoose.model('Posts',posts);
+module.exports = mongoose.model('Posts', posts);

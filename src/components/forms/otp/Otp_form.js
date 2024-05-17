@@ -442,7 +442,7 @@ export default function Otp_form() {
                             if (log_id != '') {
                                 setmessage('Login Successful')
                                 console.log(log_id)
-                                localStorage.setItem("id", log_id)
+                                localStorage.setItem("id", result._id)
                                 localStorage.setItem('login', 'true')
                                 localStorage.setItem('time', Date.now())
                                 setTimeout(() => {
@@ -454,7 +454,7 @@ export default function Otp_form() {
                     else {
                         if (result.Response == 'Success') {
                             setmessage('Registration Successful')
-                            localStorage.setItem("id", email)
+                            localStorage.setItem("id", result._id)
                             localStorage.setItem('time', Date.now())
                             console.log('registered')
                             setTimeout(() => {

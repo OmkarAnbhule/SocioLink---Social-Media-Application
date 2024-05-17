@@ -22,16 +22,16 @@ const UserSchema = new mongoose.Schema({
 	image: {
 		type: String,
 	},
-	followers:{
-		type:mongoose.Schema.Types.Mixed,
-	},
-	following:{
-		type:mongoose.Schema.Types.Mixed,
-	},
+	followers: [{
+		type: String
+	}],
+	following: [{
+		type: String
+	}],
 	date: {
 		type: Date,
 		default: Date.now,
 	},
 });
 
-module.exports = mongoose.model('User',UserSchema);
+module.exports = mongoose.model('User', UserSchema);

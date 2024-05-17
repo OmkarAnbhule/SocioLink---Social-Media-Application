@@ -2,6 +2,7 @@ const User = require('../models/UserModel');
 const Log = require('../models/LoginUserModel');
 const OTP = require('../models/otp_model')
 const bcrypt = require('bcrypt');
+const mongoose = require('mongoose');
 const { sendEmailOtp, verifyEmailOtp, sendSMSOtp, verfiySMSOtp } = require('../utils/otpUtils');
 
 User.createIndexes();
@@ -39,7 +40,7 @@ const createUser = async (req, resp) => {
         const user = await User.create({ email, name, password: hashedPassword, username });
         const login = await Log.create({ log_id: email })
         if (user && login) {
-            resp.status(201).send({ Response: "Success" });
+            resp.status(201).send({ Response: "Success", _id: user._id.toString() });
         }
     }
     catch (e) {
@@ -77,7 +78,8 @@ exports.userLogin = async (req, resp) => {
             if (await verifyEmailOtp(log_id, otp)) {
                 const user = await Log.create({ log_id });
                 if (user) {
-                    resp.status(201).send({ Response: "Success" });
+                    const result = await User.findOne({ email: log_id });
+                    resp.status(201).send({ Response: "Success", _id: result._id.toString() });
                 }
             }
             else {
@@ -86,9 +88,10 @@ exports.userLogin = async (req, resp) => {
         }
         else {
             if (await verfiySMSOtp(log_id, otp)) {
-                const result = await Log.create({ log_id });
-                if (result) {
-                    resp.status(201).send({ Response: "Success" });
+                const user = await Log.create({ log_id });
+                if (user) {
+                    const result = await User.findOne({ email: log_id });
+                    resp.status(201).send({ Response: "Success", _id: result._id.toString() });
                 }
             }
         }
@@ -172,7 +175,7 @@ exports.resetPassword = async (req, resp) => {
 exports.userlogout = async (req, resp) => {
     try {
         const { id } = req.params;
-        const res = await Log.findOneAndDelete({ log_id: id });
+        const res = await Log.findByIdAndDelete(new mongoose.Types.ObjectId(id));
         if (res) {
             resp.status(201).send({ Response: 'Success' })
         }
@@ -212,29 +215,59 @@ exports.imageUpload = async (req, resp) => {
 exports.getProfile = async (req, resp) => {
     const { id } = req.params;
     try {
-        const res = User.findOne({ email: id }).then(res => {
-            const data = res.toJSON()
-            resp.status(201).send({ Response: 'Success', data: data })
-        })
+        const res = await User.findOne({ _id: id })
+        if (res) {
+            resp.status(201).send({ Response: 'Success', data: res })
+        }
     }
     catch (e) {
+        console.log(e)
         resp.status(500).send({ Response: 'internal server error' });
     }
 }
 
 exports.getUsers = async (req, resp) => {
-    console.log(req.params)
-    const res = await User.find({ $or: [{ username: { $regex: '^' + req.params.target, $options: 'i' } },{ name: { $regex: '^' + req.params.target, $options: 'i' } }] }).exec()
-    if (res) {
-        resp.status(201).send({ Response: 'Success', data: res })
+    try {
+        let result = [];
+        const object = await User.findOne({ _id: new mongoose.Types.ObjectId(req.params.host) });
+        console.log(object);
+        const res = await User.find({ $or: [{ username: { $regex: '^' + req.params.target, $options: 'i' } }, { name: { $regex: '^' + req.params.target, $options: 'i' } }] }).exec()
+        res.forEach(obj => {
+            if (!object.following.includes(obj._id.toString()) && obj._id.toString() !== req.params.host)
+                result.push(obj)
+        })
+        console.log(result)
+        if (result.length > 0) {
+            resp.status(201).send({ Response: 'Success', data: result })
+        }
+        else {
+            resp.status(201).send({ Response: 'Success', data: [] })
+        }
+    }
+    catch (e) {
+        console.log(e)
+        resp.status(500).send({ Response: 'internal server error' });
     }
 }
 
 exports.follow = async (req, resp) => {
     const { host, target } = req.body
-    const res = await User.findOneAndUpdate({ email: host }, { $push: { following: target } }, { new: true })
-    const res2 = await User.findOneAndUpdate({ email: target }, { $push: { followers: host } }, { new: true })
-    if (res) {
+    const res = await User.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(host) }, { $push: { following: target } }, { new: true })
+    const res2 = await User.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(target) }, { $push: { followers: host } }, { new: true })
+    if (res && res2) {
         resp.status(201).send({ Response: 'Success' })
     }
+}
+
+exports.unfollow = async (req, resp) => {
+    const { host, target } = req.body
+    console.log(req.body)
+    const res = await User.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(host) }, { $pull: { following: target } }, { new: true })
+    const res2 = await User.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(target) }, { $pull: { followers: host } }, { new: true })
+    const temp = await User.find({ _id: new mongoose.Types.ObjectId(host) })
+    console.log(temp)
+    if (res && res2) {
+        resp.status(201).send({ Response: 'Success' })
+    }
+
 }

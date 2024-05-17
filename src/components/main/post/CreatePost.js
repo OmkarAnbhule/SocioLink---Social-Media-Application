@@ -1,12 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import pip from '../../images/defaults/create_post.jpg'
-import pip1 from '../../images/defaults/filters.jpg'
-import Loader from '../web_components/loader/Loader'
+import pip from '../../../images/defaults/create_post.jpg'
+import pip1 from '../../../images/defaults/filters.jpg'
+import Loader from '../../web_components/loader/Loader'
 
 export default function CreatePost() {
     const api = process.env.REACT_APP_API_URL;
-    const { state } = useLocation()
     const navigate = useNavigate()
     const isLoggedin = localStorage.getItem('login')
     const [files, setfiles] = useState([])
@@ -53,7 +52,7 @@ export default function CreatePost() {
         else {
         }
     }
-    
+
 
     const handleMouseDown = () => {
         setZooming(true)
@@ -458,7 +457,7 @@ export default function CreatePost() {
                         </div>
                     </div>
                 </div>)}
-            <div className='btn'><button onClick={handleSubmitPost}>Submit {isLoading ? <div> <Loader /></div> : null} </button> <button onClick={reset}>Clear</button></div>
+            <div className='btn'><button onClick={handleSubmitPost}>Submit {isLoading ? <div> <Loader display={'block'} /></div> : null} </button> <button onClick={reset}>Clear</button></div>
         </div>
     )
 }

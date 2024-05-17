@@ -20,28 +20,41 @@ const generateOrQuery = (id, levels) => {
 
 function traverseObjects(arr, data, type, method) {
     if (type === 'reply') {
-        arr.forEach(obj => {
-            if (obj._id.toString() === data.objId) {
-                obj.isReply = true;
-                obj.replyCount = obj.replyCount + 1;
-                obj.Replies.push(new Comment({ comment: data.comment, username: data.username, postId: data.postId }));
-            }
-            if (obj.Replies && obj.Replies.length > 0) {
-                traverseObjects(obj.Replies, data, 'reply', null);
-            }
-        });
+        if (method === 'delete') {
+            arr.forEach(obj => {
+                if (obj._id.toString() === data) {
+                    const index = arr.indexOf(obj);
+                    if (index !== -1) {
+                        arr.splice(index, 1);
+                    }
+                }
+                if (obj.Replies && obj.Replies.length > 0) {
+                    traverseObjects(obj.Replies, data, type, method);
+                }
+            });
+        }
+        else {
+            arr.forEach(obj => {
+                if (obj._id.toString() === data.objId) {
+                    obj.isReply = true;
+                    obj.replyCount = obj.replyCount + 1;
+                    obj.Replies.push(new Comment({ comment: data.comment, username: data.username, postId: data.postId }));
+                }
+                if (obj.Replies && obj.Replies.length > 0) {
+                    traverseObjects(obj.Replies, data, type, method);
+                }
+            });
+        }
     }
     else {
         if (method === 'add') {
             arr.forEach(obj => {
-                console.log(obj)
                 if (obj._id.toString() === data.commentId) {
                     obj.likeCount = obj.likeCount + 1;
                     obj.likedUsers.push(data.username);
-                    console.log(obj)
                 }
                 if (obj.Replies && obj.Replies.length > 0) {
-                    traverseObjects(obj.Replies, data, 'like', method);
+                    traverseObjects(obj.Replies, data, type, method);
                 }
             });
         }
@@ -49,10 +62,10 @@ function traverseObjects(arr, data, type, method) {
             arr.forEach(obj => {
                 if (obj._id.toString() === data.commentId) {
                     obj.likeCount--;
-                    obj.likedUsers.filter(user => user != data.username);
+                    obj.likedUsers = obj.likedUsers.filter(user => user != data.username);
                 }
                 if (obj.Replies && obj.Replies.length > 0) {
-                    traverseObjects(obj.Replies, data, 'like', method);
+                    traverseObjects(obj.Replies, data, type, method);
                 }
             });
         }
@@ -72,7 +85,7 @@ exports.createPost = async (req, resp) => {
             size: item.size,
         }))
         const filters = Object.values(JSON.parse(req.body.filters)).map(obj => obj);
-        const existingUser = await User.find({ email: id })
+        const existingUser = await User.find({ _id: new mongoose.Types.ObjectId(id) })
         if (existingUser) {
             const post_create = await Post.create({
                 id: id,
@@ -98,7 +111,7 @@ exports.createPost = async (req, resp) => {
 
 exports.getAllPost = async (req, resp) => {
     try {
-        const existing_User = await User.find({ email: req.params.id })
+        const existing_User = await User.find({ _id: new mongoose.Types.ObjectId(req.params.id) })
         if (existing_User && existing_User[0].following) {
             let arr = existing_User[0].following
             let res = []
@@ -117,6 +130,52 @@ exports.getAllPost = async (req, resp) => {
     }
 }
 
+exports.getPost = async (req, resp) => {
+    try {
+        console.log(new mongoose.Types.ObjectId(req.params.id))
+        const result = await Post.find({ _id: new mongoose.Types.ObjectId(req.params.id) });
+        if (result) {
+            console.log(result)
+            resp.status(201).send({ Response: 'Success', data: result[0] })
+        }
+    }
+    catch (e) {
+        console.log(e)
+        resp.status(500).send({ Response: 'internal server error' });
+    }
+}
+
+exports.likePost = async (req, resp) => {
+    try {
+        if (req.params.type === 'add') {
+            const result = await Post.findByIdAndUpdate(req.params.id, { $inc: { likeCount: 1 }, $push: { likedUsers: req.params.user } })
+            if (result) {
+                resp.status(201).send({ Response: 'Success' })
+            }
+        }
+        else {
+            const result = await Post.findByIdAndUpdate(req.params.id, { $inc: { likeCount: -1 }, $pull: { likedUsers: req.params.user } })
+            if (result) {
+                resp.status(201).send({ Response: 'Success' })
+            }
+        }
+    }
+    catch (e) {
+        resp.status(500).send({ Response: 'internal server error' });
+    }
+}
+
+exports.deletePost = async (req, resp) => {
+    try {
+        const result = await Post.findByIdAndDelete(new mongoose.Types.ObjectId(req.params.id));
+        if (result) {
+            resp.status(201).send({ Response: 'Success' })
+        }
+    }
+    catch (e) {
+        response.status(500).send({ Response: 'internal server' });
+    }
+}
 
 exports.addComment = async (req, resp) => {
     try {
@@ -202,3 +261,29 @@ exports.getComments = async (req, resp) => {
     }
 }
 
+exports.deleteComment = async (req, resp) => {
+    try {
+        if (req.params.level == 0) {
+            const result = await Comment.findByIdAndDelete(new mongoose.Types.ObjectId(req.params.id));
+            if (result) {
+                resp.status(201).send({ Response: 'Success' });
+            }
+        }
+        else {
+            const orQuery = generateOrQuery(req.params.id, req.params.level);
+            const obj = await Comment.find({ $or: orQuery });
+            const arr = traverseObjects(obj, req.params.id, 'reply', 'delete');
+            const result = await Comment.findByIdAndUpdate(obj[0]._id, { Replies: arr[0].Replies });
+            if (result) {
+                resp.status(201).send({ Response: 'Success' })
+            }
+            else {
+                resp.status(400).send({ Response: 'Failed' })
+            }
+        }
+    }
+    catch (e) {
+        console.log(e)
+        resp.status(500).send({ Response: 'internal server error' });
+    }
+}
