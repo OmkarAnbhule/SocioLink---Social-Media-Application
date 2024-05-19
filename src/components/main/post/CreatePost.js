@@ -377,7 +377,7 @@ export default function CreatePost() {
                             item.type.startsWith('image/') ? (
                                 <img src={URL.createObjectURL(item)} key={index} onDoubleClick={zoomin} style={{ transform: `scale(${zoom})`, filter: `contrast(${contrast}%) grayscale(${grayscale}%) invert(${invert}%) saturate(${saturation}%) sepia(${sepia}%) brightness(${brightness}%)` }} draggable={false} onMouseDown={handleMouseDown}></img>
                             ) :
-                                (<video src={URL.createObjectURL(item)} key={index} draggable={false} onClick={(e) => { if (e.target.paused) { e.target.play() } else { e.target.pause() } }} ></video>)
+                                (<video src={URL.createObjectURL(item)} key={index} draggable={false} onClick={(e) => { if (e.target.paused) { e.target.play() } else { e.target.pause() } }} style={{ transform: `scale(${zoom})`, filter: `contrast(${contrast}%) grayscale(${grayscale}%) invert(${invert}%) saturate(${saturation}%) sepia(${sepia}%) brightness(${brightness}%)` }} ></video>)
                         ))}
                     </div>) : null}
                     {files.length < 1 ? null : (<i class="bi bi-layers-fill" onClick={handleApplyAll}></i>)}

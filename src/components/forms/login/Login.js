@@ -174,7 +174,7 @@ export default function Login(props) {
         let result = await fetch(
           `${api}user/sendOTP`, {
           method: "post",
-          body: JSON.stringify({ email:text, password, val, 'type': 'email' }),
+          body: JSON.stringify({ email: text, password, val: 'login', 'type': 'email' }),
           headers: {
             'Content-Type': 'application/json'
           }

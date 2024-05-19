@@ -16,10 +16,17 @@ export default function Post(props) {
     const [isLike, setIsLike] = useState(false);
     const [isShowOptions, setIsShowOptions] = useState(false);
     const [time, setTime] = useState('');
+    const ref = useRef(null);
     const handleScroll = () => {
         const parent = divRef.current;
         const scrollIndex = Math.round(parent.scrollLeft / parent.clientWidth);
         setScrollTop(scrollIndex);
+        props.data.files.forEach((item) => {
+            console.log(item)
+            if (item.index === scrollIndex && !item.mimetype.startsWith('image/')) {
+                ref.current.pause();
+            }
+        })
     }
     const handleClickScroll = (index) => {
         const parent = divRef.current;
@@ -238,11 +245,19 @@ export default function Post(props) {
                                         />
                                         :
                                         <>
-                                            <video src={require('../../../images/posts/' + item.filename)}></video>
-                                            <button className='btn-volume'>
-                                                <i className='bi bi-volume-mute-fill'>
-                                                </i>
-                                            </button>
+                                            <video src={require('../../../images/posts/' + item.filename)}
+                                                onClick={(e) => { if (e.target.paused) { e.target.play() } else { e.target.pause() } }}
+                                                ref={ref}
+                                            ></video>
+                                            {
+                                                ref.current ? (
+                                                    <button className='btn-volume' onClick={() => { ref.current.muted = !ref.current.muted }}>
+                                                        <i className={ref.current.muted ? 'bi bi-volume-mute-fill' : 'bi bi-volume-up-fill'} style={{ color: ref && ref.current.muted ? 'black' : 'white' }}>
+                                                        </i>
+                                                    </button>
+                                                )
+                                                    : null}
+
                                         </>
                                 }
                             </div>
@@ -289,6 +304,17 @@ export default function Post(props) {
                 <div className='comment-input-section'>
                     <input type='text' placeholder='add your comment here...' value={comment} onChange={(e) => setComment(e.target.value)}></input>
                     <button onClick={() => handleComment(props.data._id)}>Comment</button>
+                </div>
+            </div>
+
+            <div className='share-section'>
+                <div className='share-user-container'>
+                    <div className='share-user'>
+                        <img width={50} height={50}></img>
+                    </div>
+                </div>
+                <div className='share-section-btn'>
+                    <button>Share</button>
                 </div>
             </div>
         </div >

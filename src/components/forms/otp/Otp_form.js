@@ -441,7 +441,6 @@ export default function Otp_form() {
                             settype('Success')
                             if (log_id != '') {
                                 setmessage('Login Successful')
-                                console.log(log_id)
                                 localStorage.setItem("id", result._id)
                                 localStorage.setItem('login', 'true')
                                 localStorage.setItem('time', Date.now())

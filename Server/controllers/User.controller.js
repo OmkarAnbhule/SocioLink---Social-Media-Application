@@ -10,20 +10,63 @@ Log.createIndexes();
 
 exports.sendOtp = async (req, resp) => {
     const { email } = req.body;
+    console.log(req.body)
     if (req.body.type == 'email') {
-        try {
-            console.log(req.body)
-            if (await sendEmailOtp(email))
-                resp.status(201).send({ Response: 'Success' })
+        if (req.body.val && req.body.val === 'login') {
+            const user = await User.findOne({ email: email });
+            if (user) {
+                try {
+                    if (await bcrypt.compare(req.body.password, user.password)) {
+                        if (await sendEmailOtp(email))
+                            resp.status(201).send({ Response: 'Success' })
+                    }
+                    else {
+                        resp.status(500).send({ Response: 'Incorrect' });
+                    }
+                }
+                catch (e) {
+                    resp.status(500).send({ Response: 'Failed' })
+                }
+            }
+            else {
+                resp.status(500).send({ Response: 'NF' })
+            }
         }
-        catch (e) {
-            resp.status(500).send({ Response: 'Failed' })
+        else {
+            try {
+                console.log(req.body)
+                if (await sendEmailOtp(email))
+                    resp.status(201).send({ Response: 'Success' })
+            }
+            catch (e) {
+                resp.status(500).send({ Response: 'Failed' })
+            }
         }
     }
     else {
+        if (req.body.val && req.body.val === 'login') {
+            const user = await User.findOne({ email: email });
+            if (user) {
+                try {
+                    if (await bcrypt.compare(req.body.password, user.password)) {
+                        if (await sendSMSOtp(email))
+                            resp.status(201).send({ Response: 'Success' })
+                    }
+                    else {
+                        resp.status(500).send({ Response: 'Incorrect Password' });
+                    }
+                }
+                catch (e) {
+                    resp.status(500).send({ Response: 'Failed' })
+                }
+            }
+            else {
+                resp.status(500).send({ Response: 'NF' })
+            }
+        }
         try {
-            if (await sendSMSOtp(email));
-            resp.status(201).send({ Response: 'Success' });
+            if (await sendSMSOtp(email))
+                resp.status(201).send({ Response: 'Success' });
         }
         catch (e) {
             resp.status(500).send({ Response: 'Failed' })
