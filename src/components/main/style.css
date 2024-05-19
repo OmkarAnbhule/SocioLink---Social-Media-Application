@@ -991,7 +991,8 @@
 }
 
 .create .post {
-    height: 480px;
+    height: max-content;
+    padding: 10px 0px;
     grid-area: post;
     background: var(--SpaceCadet);
 }
@@ -1003,18 +1004,22 @@
 }
 
 .create .post>div:first-child {
-    height: 350px;
+    height: max-content;
     display: grid;
     justify-content: center;
     align-items: center;
     position: relative;
+    margin-bottom: 10px;
 }
 
-.create .post>div:first-child .display img,
-video {
-    object-fit: contain;
-    aspect-ratio: 3/4;
-    background: black;
+.create .post>div:first-child .display {
+
+    &>img,
+    video {
+        background: black;
+        width: 100%;
+        height: max-content;
+    }
 }
 
 .create .post>div:first-child .display::-webkit-scrollbar {
@@ -1023,12 +1028,10 @@ video {
 
 .create .post>div:first-child .display {
     width: 20vw;
-    height: 40vh;
+    height: auto;
     display: grid;
     justify-content: center;
     align-items: center;
-    overflow: auto;
-    cursor: zoom-in;
 }
 
 .create .post>div:first-child .display img {

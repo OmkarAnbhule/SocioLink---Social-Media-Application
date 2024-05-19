@@ -1,49 +1,155 @@
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 export default function ChatBox({ id }) {
+    const api = process.env.REACT_APP_API_URL;
+    const [message, setMessage] = useState('');
+    const [username, setUsername] = useState('');
+    const [status, setStatus] = useState('');
+    const [time, setTime] = useState('');
+    const [image, setImage] = useState('');
+    const [receiverId, setReceiverId] = useState('');
+    const [messages, setMessages] = useState([]);
+    const bottomRef = useRef(null)
+
+    const getChat = async () => {
+        let result = await fetch(`${api}chat/getChat/${id}/${localStorage.getItem('id')}`, {
+            method: 'get',
+            headers: {
+                'Content-type': 'application/json'
+            }
+        })
+        result = await result.json();
+        if (result.Response === 'Success') {
+            setMessages(result.data[0].message)
+            return result;
+        }
+    }
+
+    const getProfile = async (User1, User2) => {
+        console.log(User1)
+        let result = await fetch(`${api}user/getProfile/${User1 == localStorage.getItem('id') ? User2 : User1}`, {
+            method: 'get',
+            headers: {
+                'Content-type': 'application/json'
+            }
+        })
+        result = await result.json();
+        if (result.Response === 'Success') {
+            setUsername(result.data.username)
+            setStatus(result.data.loginStatus)
+            setTime(formatRelativeTime(result.data.lastLogged))
+            setImage(result.data.image)
+            setReceiverId(result.data._id)
+        }
+    }
+
+
+    function formatRelativeTime(timestamp) {
+        const currentDate = new Date();
+        const providedDate = new Date(timestamp);
+
+        const timeDifference = currentDate - providedDate;
+        const secondsDifference = Math.floor(timeDifference / 1000);
+        const minutesDifference = Math.floor(secondsDifference / 60);
+        const hoursDifference = Math.floor(minutesDifference / 60);
+        const daysDifference = Math.floor(hoursDifference / 24);
+
+        if (daysDifference >= 1) {
+            return `${daysDifference}d`;
+        } else if (hoursDifference >= 1) {
+            return `${hoursDifference}h`;
+        } else if (minutesDifference >= 1) {
+            return `${minutesDifference}m`;
+        } else {
+            return `${secondsDifference}s`;
+        }
+    }
+    const handleMessage = (e) => {
+        setMessage(e.target.value)
+    }
+
+    const sendMessage = async () => {
+        let result = await fetch(`${api}chat/sendMessage`, {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                chatId: id,
+                message: message,
+                sender: localStorage.getItem('id'),
+                receiver: receiverId
+            })
+        })
+        result = await result.json();
+        if (result.Response === 'Success') {
+            setMessage('')
+        }
+
+    }
+
+
+    useEffect(() => {
+        if (id) {
+            getChat().then((result) => {
+                getProfile(result.data[0].User1, result.data[0].User2)
+            })
+        }
+        const timeId = setInterval(() => {
+            if (id) {
+                getChat()
+            }
+        }, 2000);
+
+        return () => {
+            clearInterval(timeId)
+        }
+    }, [id])
+
+    useEffect(() => {
+        if (id != undefined || id != null) {
+            setTimeout(() => {
+                bottomRef.current.scrollTop = bottomRef.current.scrollHeight;
+            }, 120)
+        }
+    }, [id])
+
     return (
         <div className='chat-box'>
             {
                 id ? (
                     <div className='chat'>
                         <div className='head'>
-                            <img width={50} height={50}></img>
-                            <p>Username</p>
+                            {
+                                image ?
+                                    <img width={50} height={50} src={require('../../../images/profile/' + image)}></img>
+                                    : null
+                            }
+                            <p>{username}&nbsp;&nbsp;<small>{status ? 'online' : `last seen at ${time}`}</small></p>
                         </div>
-                        <div className='messages'>
-                            <div className='message receive'>
-                                <p>this is a message</p>
-                            </div>
-                            <div className='message send'>
-                                <p>this is a message</p>
-                            </div>
-                            <div className='message send'>
-                                <p>this is a message</p>
-                            </div>
-                            <div className='message send'>
-                                <p>this is a message</p>
-                            </div>
-
-                            <div className='message send'>
-                                <p>this is a message</p>
-                            </div>
-                            <div className='message receive'>
-                                <p>this is a message</p>
-                            </div>
-                            <div className='message receive'>
-                                <p>this is a message</p>
-                            </div>
-                            <div className='message receive'>
-                                <p>this is a message</p>
-                            </div>
-                            <div className='message receive'>
-                                <p>this is a message</p>
-                            </div>
+                        <div className='messages' ref={bottomRef}>
+                            {
+                                messages &&
+                                messages.map((item, index) => (
+                                    <div className='message-box' key={index}>
+                                        {
+                                            item.sender == localStorage.getItem('id') ?
+                                                <div className='message send'>
+                                                    <p>{item.message}</p>
+                                                </div>
+                                                :
+                                                <div className='message receive'>
+                                                    <p>{item.message}</p>
+                                                </div>
+                                        }
+                                    </div>
+                                ))
+                            }
                         </div>
                         <div className='message-input'>
-                            <button className='add'>Add</button>
-                            <input type='text'></input>
-                            <button className='send'>Send</button>
+                            <button className='add'><i className='bi bi-plus-lg'></i></button>
+                            <input type='text' value={message} onChange={handleMessage}></input>
+                            <button className='send' onClick={sendMessage}><i className='bi bi-send-fill'></i></button>
                         </div>
                     </div>
                 )

@@ -377,7 +377,7 @@ export default function CreatePost() {
                             item.type.startsWith('image/') ? (
                                 <img src={URL.createObjectURL(item)} key={index} onDoubleClick={zoomin} style={{ transform: `scale(${zoom})`, filter: `contrast(${contrast}%) grayscale(${grayscale}%) invert(${invert}%) saturate(${saturation}%) sepia(${sepia}%) brightness(${brightness}%)` }} draggable={false} onMouseDown={handleMouseDown}></img>
                             ) :
-                                (<video src={URL.createObjectURL(item)} key={index} autoPlay></video>)
+                                (<video src={URL.createObjectURL(item)} key={index} draggable={false} onClick={(e) => { if (e.target.paused) { e.target.play() } else { e.target.pause() } }} ></video>)
                         ))}
                     </div>) : null}
                     {files.length < 1 ? null : (<i class="bi bi-layers-fill" onClick={handleApplyAll}></i>)}
@@ -385,7 +385,22 @@ export default function CreatePost() {
                 <div className='selected_files'>
                     {
                         files.toReversed().map((file, index) => (
-                            file.type.startsWith('image/') ? (<div key={index} className='media-control' style={{ border: (files.length - 1) - index === fileId ? '4px solid cyan' : '2px solid black' }} onDragStart={(e) => handleDragStart(e, file, ((files.length - 1) - index))} onDragOver={handleDragOver} onDrop={(e) => handleDrop(e, file, ((files.length - 1) - index))} draggable onClick={() => selectFile(index)}><i className='bi bi-pencil-square'></i><i className='bi bi-x-circle' onClick={() => removeItem(index)} ></i><img width={50} height={50} src={URL.createObjectURL(file)}></img></div>) : (<div className='media-control' key={index} style={{ border: (files.length - 1) - index === fileId ? '4px solid cyan' : '2px solid black' }} ><i className='bi bi-pencil-square'></i><i className='bi bi-x-circle' onClick={() => removeItem(index)}></i><video onDragStart={(e) => handleDragStart(e, file, ((files.length - 1) - index))} onDragOver={handleDragOver} onDrop={(e) => handleDrop(e, file, ((files.length - 1) - index))} draggable width={50} height={50} src={URL.createObjectURL(file)}></video></div>)
+                            file.type.startsWith('image/') ?
+                                (
+                                    <div key={index} className='media-control' style={{ border: (files.length - 1) - index === fileId ? '4px solid cyan' : '2px solid black' }} onDragStart={(e) => handleDragStart(e, file, ((files.length - 1) - index))} onDragOver={handleDragOver} onDrop={(e) => handleDrop(e, file, ((files.length - 1) - index))} draggable onClick={() => selectFile(index)}>
+                                        <i className='bi bi-pencil-square'></i>
+                                        <i className='bi bi-x-circle' onClick={() => removeItem(index)} ></i>
+                                        <img width={50} height={50} src={URL.createObjectURL(file)}></img>
+                                    </div>
+                                )
+                                :
+                                (
+                                    <div key={index} className='media-control' style={{ border: (files.length - 1) - index === fileId ? '4px solid cyan' : '2px solid black' }} onDragStart={(e) => handleDragStart(e, file, ((files.length - 1) - index))} onDragOver={handleDragOver} onDrop={(e) => handleDrop(e, file, ((files.length - 1) - index))} draggable onClick={() => selectFile(index)}>
+                                        <i className='bi bi-pencil-square'></i>
+                                        <i className='bi bi-x-circle' onClick={() => removeItem(index)}></i>
+                                        <video width={50} height={50} src={URL.createObjectURL(file)}></video>
+                                    </div>
+                                )
                         ))
                     }
                     {files.length > 0 ? (<label htmlFor='file'><i className='bi bi-plus-circle'></i></label>) : null}
@@ -413,51 +428,53 @@ export default function CreatePost() {
                     <input type="text" onChange={handleTags} placeholder="Add # before and end of tag... " value={tags} />
                 </div>
             </div>
-            {files.length == 0 ? null : (
-                <div className='filters'>
-                    <div className='tabs'>
-                        <p onClick={() => setShow(false)} style={{ background: show ? 'white' : '#B7E3FF' }}>Basic Effects</p>
-                        <p onClick={() => setShow(true)} style={{ background: !show ? 'white' : '#B7E3FF' }}>Advanced Combinations</p>
-                    </div>
-                    <div className='content'>
-                        <div className='basic-effects' style={{ display: show ? 'none' : 'grid' }}>
-                            <div className='range-control'>
-                                <p>Brightness</p>
-                                <input type='range' min={100} max={200} onChange={handleBrightness} value={filterArr[fileId] ? (filterArr[fileId].brightness ? filterArr[fileId].brightness : brightness) : brightness}></input>
-                                <p>{filterArr[fileId] ? filterArr[fileId].brightness ? filterArr[fileId].brightness - 100 : brightness - 100 : brightness - 100}%</p>
+            {
+                files.length == 0 ? null : (
+                    <div className='filters'>
+                        <div className='tabs'>
+                            <p onClick={() => setShow(false)} style={{ background: show ? 'white' : '#B7E3FF' }}>Basic Effects</p>
+                            <p onClick={() => setShow(true)} style={{ background: !show ? 'white' : '#B7E3FF' }}>Advanced Combinations</p>
+                        </div>
+                        <div className='content'>
+                            <div className='basic-effects' style={{ display: show ? 'none' : 'grid' }}>
+                                <div className='range-control'>
+                                    <p>Brightness</p>
+                                    <input type='range' min={100} max={200} onChange={handleBrightness} value={filterArr[fileId] ? (filterArr[fileId].brightness ? filterArr[fileId].brightness : brightness) : brightness}></input>
+                                    <p>{filterArr[fileId] ? filterArr[fileId].brightness ? filterArr[fileId].brightness - 100 : brightness - 100 : brightness - 100}%</p>
+                                </div>
+                                <div className='range-control'>
+                                    <p>Contrast</p>
+                                    <input type='range' min={100} max={200} onChange={handleContrast} value={filterArr[fileId] ? filterArr[fileId].contrast ? filterArr[fileId].contrast : contrast : contrast}></input>
+                                    <p>{filterArr[fileId] ? filterArr[fileId].contrast ? filterArr[fileId].contrast - 100 : contrast - 100 : contrast - 100}%</p>
+                                </div>
+                                <div className='range-control'>
+                                    <p>Sepia</p>
+                                    <input type='range' onChange={handleSepia} value={filterArr[fileId] ? filterArr[fileId].sepia ? filterArr[fileId].sepia : sepia : sepia}></input>
+                                    <p>{filterArr[fileId] ? filterArr[fileId].sepia ? filterArr[fileId].sepia : sepia : sepia}%</p>
+                                </div>
+                                <div className='range-control'>
+                                    <p>Saturation</p>
+                                    <input type='range' min={100} max={200} onChange={handleSaturation} value={filterArr[fileId] ? filterArr[fileId].saturation ? filterArr[fileId].saturation : saturation : saturation}></input>
+                                    <p>{filterArr[fileId] ? filterArr[fileId].saturation ? filterArr[fileId].saturation - 100 : saturation - 100 : saturation - 100}%</p>
+                                </div>
+                                <div className='range-control'>
+                                    <p>Grayscale</p>
+                                    <input type='range' onChange={handleGrayscale} value={filterArr[fileId] ? filterArr[fileId].grayscale ? filterArr[fileId].grayscale : grayscale : grayscale}></input>
+                                    <p>{filterArr[fileId] ? filterArr[fileId].grayscale ? filterArr[fileId].grayscale : grayscale : grayscale}%</p>
+                                </div>
+                                <div className='range-control'>
+                                    <p>Invert</p>
+                                    <input type='range' onChange={handleInvert} value={filterArr[fileId] ? filterArr[fileId].invert ? filterArr[fileId].invert : invert : invert}></input>
+                                    <p>{filterArr[fileId] ? filterArr[fileId].invert ? filterArr[fileId].invert : invert : invert}%</p>
+                                </div>
                             </div>
-                            <div className='range-control'>
-                                <p>Contrast</p>
-                                <input type='range' min={100} max={200} onChange={handleContrast} value={filterArr[fileId] ? filterArr[fileId].contrast ? filterArr[fileId].contrast : contrast : contrast}></input>
-                                <p>{filterArr[fileId] ? filterArr[fileId].contrast ? filterArr[fileId].contrast - 100 : contrast - 100 : contrast - 100}%</p>
-                            </div>
-                            <div className='range-control'>
-                                <p>Sepia</p>
-                                <input type='range' onChange={handleSepia} value={filterArr[fileId] ? filterArr[fileId].sepia ? filterArr[fileId].sepia : sepia : sepia}></input>
-                                <p>{filterArr[fileId] ? filterArr[fileId].sepia ? filterArr[fileId].sepia : sepia : sepia}%</p>
-                            </div>
-                            <div className='range-control'>
-                                <p>Saturation</p>
-                                <input type='range' min={100} max={200} onChange={handleSaturation} value={filterArr[fileId] ? filterArr[fileId].saturation ? filterArr[fileId].saturation : saturation : saturation}></input>
-                                <p>{filterArr[fileId] ? filterArr[fileId].saturation ? filterArr[fileId].saturation - 100 : saturation - 100 : saturation - 100}%</p>
-                            </div>
-                            <div className='range-control'>
-                                <p>Grayscale</p>
-                                <input type='range' onChange={handleGrayscale} value={filterArr[fileId] ? filterArr[fileId].grayscale ? filterArr[fileId].grayscale : grayscale : grayscale}></input>
-                                <p>{filterArr[fileId] ? filterArr[fileId].grayscale ? filterArr[fileId].grayscale : grayscale : grayscale}%</p>
-                            </div>
-                            <div className='range-control'>
-                                <p>Invert</p>
-                                <input type='range' onChange={handleInvert} value={filterArr[fileId] ? filterArr[fileId].invert ? filterArr[fileId].invert : invert : invert}></input>
-                                <p>{filterArr[fileId] ? filterArr[fileId].invert ? filterArr[fileId].invert : invert : invert}%</p>
+                            <div className='adv-combination' style={{ display: !show ? 'none' : 'grid' }}>
+                                <img src={pip1} width={100} height={100} onClick={blurImage}></img>
                             </div>
                         </div>
-                        <div className='adv-combination' style={{ display: !show ? 'none' : 'grid' }}>
-                            <img src={pip1} width={100} height={100} onClick={blurImage}></img>
-                        </div>
-                    </div>
-                </div>)}
+                    </div>)
+            }
             <div className='btn'><button onClick={handleSubmitPost}>Submit {isLoading ? <div> <Loader display={'block'} /></div> : null} </button> <button onClick={reset}>Clear</button></div>
-        </div>
+        </div >
     )
 }

@@ -37,7 +37,7 @@ const createUser = async (req, resp) => {
         const { email, name, password, username } = req.body;
         let hashedPassword;
         hashedPassword = await bcrypt.hash(password, 10);
-        const user = await User.create({ email, name, password: hashedPassword, username });
+        const user = await User.create({ email, name, password: hashedPassword, username, loginStatus: true });
         const login = await Log.create({ log_id: email })
         if (user && login) {
             resp.status(201).send({ Response: "Success", _id: user._id.toString() });
@@ -76,9 +76,10 @@ exports.userLogin = async (req, resp) => {
         const { log_id, otp } = req.body;
         if (req.body.type == 'email') {
             if (await verifyEmailOtp(log_id, otp)) {
-                const user = await Log.create({ log_id });
+                const result = await User.findOne({ email: log_id });
+                const result1 = await User.findOneAndUpdate({ email: log_id }, { loginStatus: true });
+                const user = await Log.create({ log_id: result._id });
                 if (user) {
-                    const result = await User.findOne({ email: log_id });
                     resp.status(201).send({ Response: "Success", _id: result._id.toString() });
                 }
             }
@@ -175,7 +176,8 @@ exports.resetPassword = async (req, resp) => {
 exports.userlogout = async (req, resp) => {
     try {
         const { id } = req.params;
-        const res = await Log.findByIdAndDelete(new mongoose.Types.ObjectId(id));
+        const res = await Log.findOneAndDelete({ log_id: new mongoose.Types.ObjectId(id) });
+        const user = await User.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(id) }, { lastLogged: Date.now(), loginStatus: false });
         if (res) {
             resp.status(201).send({ Response: 'Success' })
         }

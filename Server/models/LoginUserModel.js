@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const logUsers = new mongoose.Schema({
 	log_id: {
-		type: String,
+		type: mongoose.Types.ObjectId,
 		required: true,
 		unique: true,
 	},
@@ -12,4 +12,4 @@ const logUsers = new mongoose.Schema({
 	}
 });
 
-module.exports = mongoose.model('Login',logUsers);
+module.exports = mongoose.model('Login', logUsers);

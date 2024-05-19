@@ -11,6 +11,7 @@ app.use(cors());
 
 const userRoute = require('./routes/user.route')
 const postRoute = require('./routes/post.route')
+const chatRoute = require('./routes/chat.route');
 const mongoDb = require('./database/mongoDB');
 
 mongoDb()
@@ -21,6 +22,7 @@ app.get("/", (req, resp) => {
 
 app.use('/api/v1/user', userRoute)
 app.use('/api/v1/post', postRoute)
+app.use('/api/v1/chat', chatRoute)
 
 
 
@@ -60,27 +62,7 @@ const wsServer = new websocketServer({
 // 	  console.error('Error processing image:', error);
 // 	}
 //   });
-wsServer.on("request", request => {
-	//connect
-	const connection = request.accept(null, request.origin);
-	connection.on("open", () => console.log("opened!"))
-	connection.on("close", () => console.log("closed!"))
-	connection.on("message", message => {
-		const result = JSON.parse(message.utf8Data)
-		if (result.method == 'login') {
-			const id = result.clientId;
-		}
-	})
-	const clientId = guid();
-	clients[clientId] = {
-		"connection": connection
-	}
-	const payLoad = {
-		"method": "connect",
-		"clientId": clientId
-	}
-	connection.send(JSON.stringify(payLoad))
-})
+
 
 app.listen(5000, () => {
 	console.log('app is listening at http://localhost:5000');

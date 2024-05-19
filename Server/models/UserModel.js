@@ -28,6 +28,12 @@ const UserSchema = new mongoose.Schema({
 	following: [{
 		type: String
 	}],
+	lastLogged: {
+		type: Date,
+	},
+	loginStatus: {
+		type: Boolean,
+	},
 	date: {
 		type: Date,
 		default: Date.now,
