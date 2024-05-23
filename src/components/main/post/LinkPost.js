@@ -10,7 +10,8 @@ export default function LinkPost() {
         let result = await fetch(`${api}post/get-post/${id}`, {
             method: 'get',
             headers: {
-                'Content-type': 'application/json'
+                'Content-type': 'application/json',
+                'authorization':'Bearer '+localStorage.getItem('id')
             }
         })
         let data = await result.json()

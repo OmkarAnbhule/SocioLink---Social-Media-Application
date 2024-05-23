@@ -1,5 +1,6 @@
 const multer = require('multer');
 const postController = require('../controllers/post.controller');
+const { auth } = require('../middlewares/auth.user')
 const app = require('express').Router()
 function S4() {
 	return (((1 + Math.random()) * 0x10000) | 0).toString(32).substring(1);
@@ -17,13 +18,14 @@ const storagePost = multer.diskStorage({
 
 const uploadPost = multer({ storage: storagePost })
 
-app.post('/createPost', uploadPost.array('files'), postController.createPost);
-app.get('/get-posts/:id', postController.getAllPost);
-app.get('/get-post/:id', postController.getPost);
-app.post('/addComment', postController.addComment);
-app.get('/get-comments/:id', postController.getComments);
-app.put('/like-comment', postController.likeComment);
-app.delete('/delete-comment/:id/:level', postController.deleteComment);
-app.put('/:id/like/:type/:user', postController.likePost);
-app.delete('/deletePost/:id', postController.deletePost);
+app.post('/createPost', uploadPost.array('files'), auth, postController.createPost);
+app.get('/get-posts/:id', auth, postController.getAllPost);
+app.get('/get-post/:id', auth, postController.getPost);
+app.post('/addComment', auth, postController.addComment);
+app.get('/get-comments/:id', auth, postController.getComments);
+app.put('/like-comment', auth, postController.likeComment);
+app.delete('/delete-comment/:id/:level', auth, postController.deleteComment);
+app.put('/:id/like/:type/:user', auth, postController.likePost);
+app.delete('/deletePost/:id', auth, postController.deletePost);
+
 module.exports = app

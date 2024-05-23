@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { useJwt } from 'react-jwt'
 
 export default function ChatBox({ id }) {
     const api = process.env.REACT_APP_API_URL;
+    const { decodedToken, isExpired } = useJwt(localStorage.getItem('id'));
     const [message, setMessage] = useState('');
     const [username, setUsername] = useState('');
     const [status, setStatus] = useState('');
@@ -15,7 +17,8 @@ export default function ChatBox({ id }) {
         let result = await fetch(`${api}chat/getChat/${id}/${localStorage.getItem('id')}`, {
             method: 'get',
             headers: {
-                'Content-type': 'application/json'
+                'Content-type': 'application/json',
+                'authorization': 'Bearer ' + localStorage.getItem('id')
             }
         })
         result = await result.json();
@@ -27,10 +30,11 @@ export default function ChatBox({ id }) {
 
     const getProfile = async (User1, User2) => {
         console.log(User1)
-        let result = await fetch(`${api}user/getProfile/${User1 == localStorage.getItem('id') ? User2 : User1}`, {
+        let result = await fetch(`${api}user/getProfile/${decodedToken ? User1 === decodedToken.user ? User2 : User1 : null}`, {
             method: 'get',
             headers: {
-                'Content-type': 'application/json'
+                'Content-type': 'application/json',
+                'authorization': 'Bearer ' + localStorage.getItem('id')
             }
         })
         result = await result.json();
@@ -72,12 +76,13 @@ export default function ChatBox({ id }) {
         let result = await fetch(`${api}chat/sendMessage`, {
             method: 'post',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'authorization': 'Bearer ' + localStorage.getItem('id')
             },
             body: JSON.stringify({
                 chatId: id,
                 message: message,
-                sender: localStorage.getItem('id'),
+                id: localStorage.getItem('id'),
                 receiver: receiverId
             })
         })
@@ -133,7 +138,8 @@ export default function ChatBox({ id }) {
                                 messages.map((item, index) => (
                                     <div className='message-box' key={index}>
                                         {
-                                            item.sender == localStorage.getItem('id') ?
+                                            decodedToken &&
+                                                item.sender == decodedToken.user ?
                                                 <div className='message send'>
                                                     <p>{item.message}</p>
                                                 </div>

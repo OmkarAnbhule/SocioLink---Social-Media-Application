@@ -135,7 +135,8 @@ export default function Otp_form() {
                             method: "post",
                             body: JSON.stringify({ email: fp_email, 'type': fp_val }),
                             headers: {
-                                'Content-Type': 'application/json'
+                                'Content-Type': 'application/json',
+                                'authorization': 'Bearer ' + localStorage.getItem('id'),
                             }
                         })
                         result = await result.json();
@@ -164,7 +165,8 @@ export default function Otp_form() {
                                 method: "post",
                                 body: JSON.stringify({ email: log_id, 'type': 'email' }),
                                 headers: {
-                                    'Content-Type': 'application/json'
+                                    'Content-Type': 'application/json',
+                                    'authorization': 'Bearer ' + localStorage.getItem('id')
                                 }
                             })
                             result = await result.json();
@@ -180,7 +182,8 @@ export default function Otp_form() {
                                 method: "post",
                                 body: JSON.stringify({ email: log_id, 'type': 'sms' }),
                                 headers: {
-                                    'Content-Type': 'application/json'
+                                    'Content-Type': 'application/json',
+                                    'authorization': 'Bearer ' + localStorage.getItem('id')
                                 }
                             })
                             result = await result.json();
@@ -200,7 +203,8 @@ export default function Otp_form() {
                             method: "post",
                             body: JSON.stringify({ email, 'type': 'email' }),
                             headers: {
-                                'Content-Type': 'application/json'
+                                'Content-Type': 'application/json',
+                                'authorization': 'Bearer ' + localStorage.getItem('id'),
                             }
                         })
                         result = await result.json();
@@ -217,7 +221,8 @@ export default function Otp_form() {
                             method: "post",
                             body: JSON.stringify({ email, 'type': 'sms' }),
                             headers: {
-                                'Content-Type': 'application/json'
+                                'Content-Type': 'application/json',
+                                'authorization': 'Bearer ' + localStorage.getItem('id'),
                             }
                         })
                         result = await result.json();
@@ -249,7 +254,8 @@ export default function Otp_form() {
                             method: "post",
                             body: JSON.stringify({ val: fp_val, text: fp_email, otp }),
                             headers: {
-                                'Content-Type': 'application/json'
+                                'Content-Type': 'application/json',
+                                'authorization': 'Bearer ' + localStorage.getItem('id'),
                             }
                         })
                         result = await result.json();
@@ -275,7 +281,8 @@ export default function Otp_form() {
                                     method: "post",
                                     body: JSON.stringify({ log_id, otp, 'type': 'email' }),
                                     headers: {
-                                        'Content-Type': 'application/json'
+                                        'Content-Type': 'application/json',
+                                        'authorization': 'Bearer ' + localStorage.getItem('id')
                                     }
                                 })
                                 result = await result.json();
@@ -292,7 +299,8 @@ export default function Otp_form() {
                                     method: "post",
                                     body: JSON.stringify({ log_id, otp, 'type': 'sms' }),
                                     headers: {
-                                        'Content-Type': 'application/json'
+                                        'Content-Type': 'application/json',
+                                        'authorization': 'Bearer ' + localStorage.getItem('id')
                                     }
                                 })
                                 result = await result.json();
@@ -312,7 +320,8 @@ export default function Otp_form() {
                                 method: "post",
                                 body: JSON.stringify({ email, name, password, username, otp, 'type': 'email' }),
                                 headers: {
-                                    'Content-Type': 'application/json'
+                                    'Content-Type': 'application/json',
+                                    'authorization': 'Bearer ' + localStorage.getItem('id')
                                 }
                             })
                             result = await result.json();
@@ -329,7 +338,8 @@ export default function Otp_form() {
                                 method: "post",
                                 body: JSON.stringify({ email, name, password, username, otp, "type": 'sms' }),
                                 headers: {
-                                    'Content-Type': 'application/json'
+                                    'Content-Type': 'application/json',
+                                    'authorization': 'Bearer ' + localStorage.getItem('id')
                                 }
                             })
                             result = await result.json();

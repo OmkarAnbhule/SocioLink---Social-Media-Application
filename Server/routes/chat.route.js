@@ -1,10 +1,11 @@
 const ChatController = require('../controllers/chat.controller');
+const { auth } = require('../middlewares/auth.user')
 const app = require('express').Router();
 
-app.post('/CreateChat', ChatController.createChat);
-app.post('/sendMessage', ChatController.sendMessage);
-app.get('/search/:host/:target', ChatController.getUsers);
-app.get('/getChats/:sender', ChatController.getChats);
-app.get('/getChat/:chatId/:userId',ChatController.getChat);
+app.post('/CreateChat', auth, ChatController.createChat);
+app.post('/sendMessage', auth, ChatController.sendMessage);
+app.get('/search/:id/:target', auth, ChatController.getUsers);
+app.get('/getChats/:id', auth, ChatController.getChats);
+app.get('/getChat/:chatId/:id', auth, ChatController.getChat);
 
 module.exports = app

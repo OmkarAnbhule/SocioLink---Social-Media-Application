@@ -102,7 +102,8 @@ export default function Register() {
           method: "post",
           body: JSON.stringify({ email, 'type': 'email' }),
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization': 'Bearer ' + localStorage.getItem('id')
           }
         })
         result = await result.json()
@@ -119,7 +120,8 @@ export default function Register() {
           method: "post",
           body: JSON.stringify({ email, 'type': 'sms' }),
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization': 'Bearer ' + localStorage.getItem('id')
           }
         })
         result = await result.json()
@@ -254,6 +256,10 @@ export default function Register() {
       let result = await fetch(`${api}user/uploadImage`, {
         method: 'post',
         body: formdata,
+        headers: {
+          'authorization': 'Bearer ' + localStorage.getItem('id')
+        }
+
       })
       result = await result.json()
       displayUpload(result)

@@ -7,7 +7,8 @@ export default function Logout() {
             method: 'post',
             body: JSON.stringify({ email: id }),
             headers: {
-                'Content-type': 'application/json'
+                'Content-type': 'application/json',
+                'authorization':'Bearer '+localStorage.getItem('id')
             }
         })
         result = await result.json()

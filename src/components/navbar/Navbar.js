@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import './Navbar.css'
 import { useNavigate } from 'react-router-dom';
 import logo from './S.png'
+import { useJwt } from 'react-jwt';
 export default function Navbar() {
   const api = process.env.REACT_APP_API_URL;
+  const { decodedToken, isExpired } = useJwt(localStorage.getItem('id'));
   const navigate = useNavigate();
   const id = localStorage.getItem('id')
   const [img, setImg] = useState('')
@@ -12,22 +14,24 @@ export default function Navbar() {
     let result = await fetch(`${api}user/logout/${id}`, {
       method: 'delete',
       headers: {
-        'Content-type': 'application/json'
+        'Content-type': 'application/json',
+        'authorization': 'Bearer ' + localStorage.getItem('id')
       }
     })
     result = await result.json()
     logout_navigate(result)
   }
   useEffect(() => {
-    if (isLoggedin == 'true') {
+    if (isLoggedin == 'true' && decodedToken) {
       getProfile()
     }
-  }, [])
+  }, [decodedToken])
   const getProfile = async () => {
-    let result = await fetch(`${api}user/getProfile/${id}`, {
+    let result = await fetch(`${api}user/getProfile/${decodedToken ? decodedToken.user : null}`, {
       method: 'get',
       headers: {
-        'Content-type': 'application/json'
+        'Content-type': 'application/json',
+        'authorization': 'Bearer ' + localStorage.getItem('id')
       }
     })
     result = await result.json()

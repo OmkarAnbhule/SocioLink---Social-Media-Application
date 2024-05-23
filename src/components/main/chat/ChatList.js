@@ -17,7 +17,8 @@ export default function ChatList() {
         let result = await fetch(`${api}chat/search/${localStorage.getItem('id')}/${search}`, {
             method: 'get',
             headers: {
-                'Content-type': 'application/json'
+                'Content-type': 'application/json',
+                'authorization': 'Bearer ' + localStorage.getItem('id')
             }
         })
         result = await result.json();
@@ -41,10 +42,11 @@ export default function ChatList() {
         let result = await fetch(`${api}chat/CreateChat`, {
             method: 'post',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'authorization': 'Bearer ' + localStorage.getItem('id')
             },
             body: JSON.stringify({
-                sender: localStorage.getItem('id'),
+                id: localStorage.getItem('id'),
                 receiver: id
             })
         })
@@ -58,7 +60,8 @@ export default function ChatList() {
         let result = await fetch(`${api}chat/getChats/${localStorage.getItem('id')}`, {
             method: 'get',
             headers: {
-                'Content-type': 'application/json'
+                'Content-type': 'application/json',
+                'authorization': 'Bearer ' + localStorage.getItem('id')
             }
         })
         result = await result.json();
@@ -87,9 +90,9 @@ export default function ChatList() {
     }, [search])
 
     useEffect(() => {
-        const id = setInterval(()=>{
+        const id = setInterval(() => {
             getChats()
-        },2000)
+        }, 2000)
         return () => {
             clearInterval(id)
         }

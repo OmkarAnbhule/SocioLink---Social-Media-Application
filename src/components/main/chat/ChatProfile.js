@@ -1,25 +1,31 @@
 import React, { useEffect, useState } from 'react'
+import { useJwt } from 'react-jwt';
+
 
 export default function ChatProfile({ data, callback }) {
     const api = process.env.REACT_APP_API_URL;
+    const { decodedToken, isExpired } = useJwt(localStorage.getItem('id'))
     const [img, setImg] = useState('');
     const [username, setUsername] = useState('');
     const [time, setTime] = useState('');
-    const [show, setShow] = useState(data.User1 == localStorage.getItem('id') ? data.isSenderRead : data.isReceiverRead);
+    const [show, setShow] = useState(decodedToken ? data.User1 === decodedToken.user ? data.isSenderRead : data.isReceiverRead : null);
 
 
     const getProfile = async () => {
-        let result = await fetch(`${api}user/getProfile/${data.User1 == localStorage.getItem('id') ? data.User2 : data.User1}`, {
+        let result = await fetch(`${api}user/getProfile/${decodedToken ? data.User1 == decodedToken.user ? data.User2 : data.User1 : null}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                'authorization': 'Bearer ' + localStorage.getItem('id')
             }
         })
         result = await result.json();
         console.log(result)
-        setImg(result.data.image);
-        setUsername(result.data.username);
-        setTime(formatRelativeTime(result.data.lastLogged));
+        if (result.Response === 'Success') {
+            setImg(result.data.image);
+            setUsername(result.data.username);
+            setTime(formatRelativeTime(result.data.lastLogged));
+        }
     }
 
 
@@ -43,18 +49,21 @@ export default function ChatProfile({ data, callback }) {
             return `${secondsDifference}s`;
         }
     }
-    
+
 
     useEffect(() => {
-        getProfile()
-    }, [])
+        setTimeout(() => {
+            if(decodedToken)
+            getProfile()
+        }, 1000)
+    }, [decodedToken])
 
     return (
         <div className='chatlist-container' onClick={() => { callback(data._id); setShow(true) }}>
             <div className='chat'>
                 <div className='head'>
                     {
-                        img ?
+                        img && decodedToken ?
                             <img width={50} height={50} src={require('../../../images/profile/' + img)}></img>
                             : null
                     }

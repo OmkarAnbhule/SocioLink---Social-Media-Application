@@ -57,7 +57,8 @@ export default function Username(props) {
                 `${api}user/verfiy/username/${Username}`, {
                 method: "get",
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'authorization': 'Bearer ' + localStorage.getItem('id')
                 }
             })
             result = await result.json();

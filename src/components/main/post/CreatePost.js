@@ -74,8 +74,10 @@ export default function CreatePost() {
             body: JSON.stringify({ query: location }),
             headers: {
                 'Content-Type': 'application/json',
+                'authorization': 'Bearer ' + localStorage.getItem('id')
             }
-        })
+        }
+        )
         result = await result.json()
         displayLocation(result)
     }
@@ -326,7 +328,11 @@ export default function CreatePost() {
         formData.append('tags', tagArr)
         let result = await fetch(`${api}post/createPost`, {
             method: 'post',
-            body: formData
+            body: formData,
+            headers: {
+                'Content-Type':'multipart/form-data',
+                'authorization':'Bearer '+localStorage.getItem('id')
+            }
         })
         result = await result.json()
         displayResult(result)

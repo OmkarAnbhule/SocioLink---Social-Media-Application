@@ -45,11 +45,12 @@ export default function Post(props) {
         let result = await fetch(`${api}user/unfollowUser`, {
             method: 'post',
             body: JSON.stringify({
-                host: localStorage.getItem('id'),
+                id: localStorage.getItem('id'),
                 target: target
             }),
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'authorization':'Bearer '+localStorage.getItem('id')
             }
         })
     }
@@ -59,7 +60,8 @@ export default function Post(props) {
             let result = await fetch(`${api}post/get-comments/${props.data._id}`, {
                 method: 'get',
                 headers: {
-                    'Content-type': 'application/json'
+                    'Content-type': 'application/json',
+                    'authorization':'Bearer '+localStorage.getItem('id')
                 }
             })
             result = await result.json()
@@ -77,7 +79,8 @@ export default function Post(props) {
             let reuslt = await fetch(`${api}post/deletePost/${props.data._id}`, {
                 method: 'delete',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'authorization':'Bearer '+localStorage.getItem('id')
                 }
             })
         }
@@ -102,7 +105,8 @@ export default function Post(props) {
                     postId: postId
                 }),
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'authorization':'Bearer '+localStorage.getItem('id')
                 }
             })
             result = await result.json()
@@ -122,7 +126,8 @@ export default function Post(props) {
                 let result = await fetch(`${api}post/${props.data._id}/like/add/${id}`, {
                     method: 'put',
                     headers: {
-                        'Content-type': 'application/json'
+                        'Content-type': 'application/json',
+                        'authorization':'Bearer '+localStorage.getItem('id')
                     }
                 })
                 result = await result.json()
@@ -140,7 +145,8 @@ export default function Post(props) {
                 let result = await fetch(`${api}post/${props.data._id}/like/remove/${id}`, {
                     method: 'put',
                     headers: {
-                        'Content-type': 'application/json'
+                        'Content-type': 'application/json',
+                        'authorization':'Bearer '+localStorage.getItem('id')
                     }
                 })
                 result = await result.json()
@@ -181,10 +187,11 @@ export default function Post(props) {
             setIsLike(true)
         }
         async function update() {
-            let result = await fetch(`${api}user/getProfile/${localStorage.getItem('id')}`, {
+            let result = await fetch(`${api}user/getProfile/${props.data.id}`, {
                 method: 'get',
                 headers: {
-                    'Content-type': 'application/json'
+                    'Content-type': 'application/json',
+                    'authorization':'Bearer '+localStorage.getItem('id')
                 }
             })
             result = await result.json()
@@ -210,7 +217,7 @@ export default function Post(props) {
             <div className='head'>
                 <div className='profile'>
                     {img != '' ? <img src={require('../../../images/profile/' + img)}></img> : ''}
-                    <p>{username}&nbsp;<small>{time}</small></p>
+                    <p>{username}&nbsp;<small>{time} ago at {props.data.location}</small></p>
                 </div>
                 <button onClick={() => setIsShowOptions(!isShowOptions)}><i className={isShowOptions ? 'bi bi-x-lg' : 'bi bi-three-dots-vertical'}></i></button>
                 <div style={{ transform: isShowOptions ? 'scaleX(1)' : 'scaleX(0)' }} className='post-options'>

@@ -1,3 +1,5 @@
+require('dotenv').config()
+const jwt = require('jsonwebtoken')
 const User = require('../models/UserModel');
 const Log = require('../models/LoginUserModel');
 const OTP = require('../models/otp_model')
@@ -83,7 +85,8 @@ const createUser = async (req, resp) => {
         const user = await User.create({ email, name, password: hashedPassword, username, loginStatus: true });
         const login = await Log.create({ log_id: email })
         if (user && login) {
-            resp.status(201).send({ Response: "Success", _id: user._id.toString() });
+            const token = jwt.sign({ user: user._id.toString(), email: email }, process.env.JWT_SECRET_KEY, { expiresIn: process.env.JWT_EXPIRES_IN })
+            resp.status(201).send({ Response: "Success", _id: token });
         }
     }
     catch (e) {
@@ -123,7 +126,8 @@ exports.userLogin = async (req, resp) => {
                 const result1 = await User.findOneAndUpdate({ email: log_id }, { loginStatus: true });
                 const user = await Log.create({ log_id: result._id });
                 if (user) {
-                    resp.status(201).send({ Response: "Success", _id: result._id.toString() });
+                    const token = jwt.sign({ user: result._id.toString(), email: log_id }, process.env.JWT_SECRET_KEY, { expiresIn: process.env.JWT_EXPIRES_IN })
+                    resp.status(201).send({ Response: "Success", _id: token });
                 }
             }
             else {
@@ -135,7 +139,8 @@ exports.userLogin = async (req, resp) => {
                 const user = await Log.create({ log_id });
                 if (user) {
                     const result = await User.findOne({ email: log_id });
-                    resp.status(201).send({ Response: "Success", _id: result._id.toString() });
+                    const token = jwt.sign({ user: result._id.toString(), email: email }, process.env.JWT_SECRET_KEY, { expiresIn: process.env.JWT_EXPIRES_IN })
+                    resp.status(201).send({ Response: "Success", _id: token });
                 }
             }
         }
@@ -274,14 +279,13 @@ exports.getProfile = async (req, resp) => {
 exports.getUsers = async (req, resp) => {
     try {
         let result = [];
-        const object = await User.findOne({ _id: new mongoose.Types.ObjectId(req.params.host) });
+        const object = await User.findOne({ _id: new mongoose.Types.ObjectId(req.params.id) });
         console.log(object);
         const res = await User.find({ $or: [{ username: { $regex: '^' + req.params.target, $options: 'i' } }, { name: { $regex: '^' + req.params.target, $options: 'i' } }] }).exec()
         res.forEach(obj => {
-            if (!object.following.includes(obj._id.toString()) && obj._id.toString() !== req.params.host)
+            if (!object.following.includes(obj._id.toString()) && obj._id.toString() !== req.params.id)
                 result.push(obj)
         })
-        console.log(result)
         if (result.length > 0) {
             resp.status(201).send({ Response: 'Success', data: result })
         }
@@ -290,27 +294,24 @@ exports.getUsers = async (req, resp) => {
         }
     }
     catch (e) {
-        console.log(e)
         resp.status(500).send({ Response: 'internal server error' });
     }
 }
 
 exports.follow = async (req, resp) => {
-    const { host, target } = req.body
-    const res = await User.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(host) }, { $push: { following: target } }, { new: true })
-    const res2 = await User.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(target) }, { $push: { followers: host } }, { new: true })
+    const { id, target } = req.body
+    const res = await User.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(id) }, { $push: { following: target } }, { new: true })
+    const res2 = await User.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(target) }, { $push: { followers: id } }, { new: true })
     if (res && res2) {
         resp.status(201).send({ Response: 'Success' })
     }
 }
 
 exports.unfollow = async (req, resp) => {
-    const { host, target } = req.body
+    const { id, target } = req.body
     console.log(req.body)
-    const res = await User.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(host) }, { $pull: { following: target } }, { new: true })
-    const res2 = await User.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(target) }, { $pull: { followers: host } }, { new: true })
-    const temp = await User.find({ _id: new mongoose.Types.ObjectId(host) })
-    console.log(temp)
+    const res = await User.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(id) }, { $pull: { following: target } }, { new: true })
+    const res2 = await User.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(target) }, { $pull: { followers: id } }, { new: true })
     if (res && res2) {
         resp.status(201).send({ Response: 'Success' })
     }

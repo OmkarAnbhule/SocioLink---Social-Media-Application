@@ -58,7 +58,8 @@ export default function Email_mobile(props) {
                 `${api}user/verify/email/${Email}`, {
                 method: 'get',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'authorization': 'Bearer ' + localStorage.getItem('id')
                 }
             }
             )
@@ -101,7 +102,8 @@ export default function Email_mobile(props) {
                     `${api}user/verfiy/email${Email}`, {
                     method: 'get',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'authorization': 'Bearer ' + localStorage.getItem('id')
                     }
                 }
                 )

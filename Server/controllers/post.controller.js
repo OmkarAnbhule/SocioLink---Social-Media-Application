@@ -117,7 +117,6 @@ exports.getAllPost = async (req, resp) => {
             let res = []
             for (let i = 0; i < arr.length; i++) {
                 let posts = await Post.find({ id: arr[i] })
-                console.log(posts)
                 res[i] = posts
             }
             resp.status(201).send({ Response: 'Success', data: res })

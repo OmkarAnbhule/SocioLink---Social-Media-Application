@@ -27,6 +27,7 @@ export default function Explore() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
+                    'authorization':'Bearer '+localStorage.getItem('id')
                 },
             });
 
@@ -49,9 +50,10 @@ export default function Explore() {
         try {
             const result = await fetch(`${api}user/followUser`, {
                 method: 'POST',
-                body: JSON.stringify({ host: localStorage.getItem('id'), target }),
+                body: JSON.stringify({ id: localStorage.getItem('id'), target }),
                 headers: {
                     'Content-Type': 'application/json',
+                    'authorization':'Bearer '+localStorage.getItem('id')
                 },
             });
 

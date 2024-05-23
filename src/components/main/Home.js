@@ -17,7 +17,8 @@ export default function Home() {
     let result = await fetch(`${api}user/logout/${val}`, {
       method: 'delete',
       headers: {
-        'Content-type': 'application/json'
+        'Content-type': 'application/json',
+        'authorization':'Bearer '+localStorage.getItem('id')
       }
     })
     result = await result.json()
@@ -77,6 +78,7 @@ export default function Home() {
       method: 'get',
       headers: {
         'Content-Type': 'application/json',
+        'authorization':'Bearer '+localStorage.getItem('id')
       }
     })
     result = await result.json()

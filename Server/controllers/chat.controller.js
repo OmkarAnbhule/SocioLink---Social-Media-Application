@@ -7,10 +7,10 @@ const mongoose = require('mongoose');
 
 exports.createChat = async (req, res) => {
     try {
-        const { sender, receiver } = req.body;
-        const existingChat = await Chat.find({ $or: [{ User1: new mongoose.Types.ObjectId(sender), User2: new mongoose.Types.ObjectId(receiver) }, { User1: new mongoose.Types.ObjectId(receiver), User2: new mongoose.Types.ObjectId(sender) }] });
+        const { id, receiver } = req.body;
+        const existingChat = await Chat.find({ $or: [{ User1: new mongoose.Types.ObjectId(id), User2: new mongoose.Types.ObjectId(receiver) }, { User1: new mongoose.Types.ObjectId(receiver), User2: new mongoose.Types.ObjectId(id) }] });
         if (existingChat.length <= 0) {
-            const result = await Chat.create({ User1: new mongoose.Types.ObjectId(sender), User2: new mongoose.Types.ObjectId(receiver) });
+            const result = await Chat.create({ User1: new mongoose.Types.ObjectId(id), User2: new mongoose.Types.ObjectId(receiver) });
             if (result) {
                 res.status(201).send({ Response: 'Success', id: result._id.toString() });
             }
@@ -27,11 +27,11 @@ exports.createChat = async (req, res) => {
 
 exports.sendMessage = async (req, res) => {
     try {
-        const { message, chatId, sender, receiver } = req.body;
-        const result = await Message.create({ message, sender, receiver });
+        const { message, chatId, id, receiver } = req.body;
+        const result = await Message.create({ message, sender: id, receiver });
         const chat = await Chat.findById(chatId);
         const userId = chat.User1.toString();
-        const isSenderUser1 = userId === sender;
+        const isSenderUser1 = userId === id;
         const isReceiverUser1 = userId === receiver;
         const chatUpdateResult = await Chat.findByIdAndUpdate(
             chatId,
@@ -59,10 +59,10 @@ exports.sendMessage = async (req, res) => {
 
 exports.getChat = async (req, res) => {
     try {
-        const { chatId, userId } = req.params;
+        const { chatId, id } = req.params;
         const result = await Chat.findById(chatId);
         const user = result.User1.toString();
-        const isSenderUser1 = user === userId;
+        const isSenderUser1 = user === id;
         await Chat.findByIdAndUpdate(new mongoose.Types.ObjectId(chatId),
             {
                 isSenderRead: isSenderUser1,
@@ -82,8 +82,8 @@ exports.getChat = async (req, res) => {
 
 exports.getChats = async (req, res) => {
     try {
-        const { sender } = req.params;
-        const existingChat = await Chat.find({ $or: [{ User1: new mongoose.Types.ObjectId(sender) }, { User2: new mongoose.Types.ObjectId(sender) }] });
+        const { id } = req.params;
+        const existingChat = await Chat.find({ $or: [{ User1: new mongoose.Types.ObjectId(id) }, { User2: new mongoose.Types.ObjectId(id) }] });
         if (existingChat) {
             res.status(200).send({ Response: 'Success', data: existingChat });
         }
@@ -98,8 +98,8 @@ exports.getChats = async (req, res) => {
 
 exports.getUsers = async (req, res) => {
     try {
-        const { host, target } = req.params;
-        const hostUser = await User.findOne({ _id: new mongoose.Types.ObjectId(host) });
+        const { id, target } = req.params;
+        const hostUser = await User.findOne({ _id: new mongoose.Types.ObjectId(id) });
 
         if (!hostUser) {
             return res.status(404).json({ message: 'Host user not found' });
@@ -119,7 +119,6 @@ exports.getUsers = async (req, res) => {
         res.status(200).send({ Response: 'Success', data: matchingFollowers })
     }
     catch (e) {
-        console.log(e)
         res.status(500).send({ Response: 'internal server error' });
     }
 }

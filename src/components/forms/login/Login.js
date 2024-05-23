@@ -124,7 +124,8 @@ export default function Login(props) {
         method: "post",
         body: JSON.stringify({ text: state.id, password: password1 }),
         headers: {
-          'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization':'Bearer '+localStorage.getItem('id')
         }
       })
       result = await result.json()
@@ -141,7 +142,8 @@ export default function Login(props) {
         method: "post",
         body: JSON.stringify({ text, 'type': val }),
         headers: {
-          'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization':'Bearer '+localStorage.getItem('id')
         }
       })
       result = await result.json()
@@ -159,7 +161,8 @@ export default function Login(props) {
           method: "post",
           body: JSON.stringify({ text, password, val, 'type': 'sms' }),
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization':'Bearer '+localStorage.getItem('id')
           }
         })
         result = await result.json()
@@ -176,7 +179,8 @@ export default function Login(props) {
           method: "post",
           body: JSON.stringify({ email: text, password, val: 'login', 'type': 'email' }),
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization':'Bearer '+localStorage.getItem('id')
           }
         })
         result = await result.json()

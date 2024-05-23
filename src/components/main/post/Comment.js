@@ -52,7 +52,8 @@ export default function Comment({ comments, index, level }) {
                     level: level
                 }),
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'authorization':'Bearer '+localStorage.getItem('id')
                 }
             })
             result = await result.json()
@@ -68,7 +69,8 @@ export default function Comment({ comments, index, level }) {
         let result = await fetch(`${api}post/delete-comment/${comments._id}/${level}`, {
             method: 'delete',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'authorization':'Bearer '+localStorage.getItem('id')
             }
         })
         result = await result.json();
@@ -88,7 +90,8 @@ export default function Comment({ comments, index, level }) {
                     method: 'add'
                 }),
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'authorization':'Bearer '+localStorage.getItem('id')
                 }
             })
             result = await result.json();
@@ -108,7 +111,8 @@ export default function Comment({ comments, index, level }) {
                     method: 'remove'
                 }),
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'authorization':'Bearer '+localStorage.getItem('id')
                 }
             })
             result = await result.json();
