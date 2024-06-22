@@ -5,6 +5,7 @@ const Log = require('../models/LoginUserModel');
 const OTP = require('../models/otp_model')
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
+const { uploadFileOnCloudinary } = require('../utils/cloudinary.utils')
 const { sendEmailOtp, verifyEmailOtp, sendSMSOtp, verfiySMSOtp } = require('../utils/otpUtils');
 
 User.createIndexes();
@@ -242,13 +243,12 @@ exports.userlogout = async (req, resp) => {
 
 
 exports.imageUpload = async (req, resp) => {
-    console.log(req.file.filename)
-    const imageName = req.file.filename
     const email = req.body.email
     try {
         const existingUser = User.find({ email })
         if (existingUser) {
-            const img = await User.findOneAndUpdate({ email: email }, { image: imageName }, { new: true })
+            const res = await uploadFileOnCloudinary(req.files.file, 'userAvatar')
+            const img = await User.findOneAndUpdate({ email: email }, { image: res.secure_url }, { new: true })
             if (img) {
                 resp.status(201).send({ Response: 'Success' })
             }

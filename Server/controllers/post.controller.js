@@ -1,5 +1,6 @@
 const Post = require('../models/PostModel');
 const User = require('../models/UserModel');
+const { uploadFileOnCloudinary } = require('../utils/cloudinary.utils')
 const Comment = require('../models/CommentModel');
 const { default: mongoose } = require('mongoose');
 
@@ -77,13 +78,11 @@ function traverseObjects(arr, data, type, method) {
 
 exports.createPost = async (req, resp) => {
     try {
+        let files_arr = []
         const { id, caption, location, tags } = req.body
-        const files = req.files.map((item, index) => ({
-            filename: item.filename,
-            filetype: item.filetype,
-            mimetype: item.mimetype,
-            size: item.size,
-        }))
+        const uploadPromises = req.files.file.map(item => uploadFileOnCloudinary(item, 'reviewFiles'));
+        const uploadResults = await Promise.all(uploadPromises);
+        files_arr = uploadResults.map(upload => upload.secure_url);
         const filters = Object.values(JSON.parse(req.body.filters)).map(obj => obj);
         const existingUser = await User.find({ _id: new mongoose.Types.ObjectId(id) })
         if (existingUser) {
@@ -92,7 +91,7 @@ exports.createPost = async (req, resp) => {
                 location: location,
                 caption: caption,
                 tags: tags,
-                files: files,
+                files: files_arr,
                 filters: filters,
             })
             if (post_create) {

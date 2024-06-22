@@ -1,23 +1,41 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Ignore Vercel logs
+.vercel
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
+# Ignore .env files which may contain sensitive information
+.env*
 
-# testing
-/coverage
+# Ignore node_modules directory
+node_modules/
 
-# production
+# Ignore build output
 /build
 
-# misc
-.DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# Ignore yarn.lock file (if using Yarn)
+yarn.lock
 
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# Ignore npm's lock files
+package-lock.json
+npm-shrinkwrap.json
+
+# Ignore any local configuration files
+*.config.js
+
+# Ignore IDE/Editor specific files
+.vscode/
+*.idea/
+
+# Ignore OS generated files
+.DS_Store
+
+# Ignore any backup files
+*~
+
+# Ignore logs and runtime data
+*.log
+*.pid
+
+# Ignore coverage output
+coverage/
+
+# Ignore any other generated files or folders
+# Add specific files or directories as per your project needs

@@ -1,20 +1,22 @@
 require('dotenv').config()
-const http = require("http");
-const websocketServer = require("websocket").server
-const httpServer = http.createServer();
 const express = require('express');
 const app = express();
 const cors = require("cors");
+const fileUpload = require('express-fileupload')
 app.use(express.json());
 app.use(cors());
-
+app.use(fileUpload({
+	useTempFiles: true,
+	tempFileDir: "/tmp/"
+}));
 
 const userRoute = require('./routes/user.route')
 const postRoute = require('./routes/post.route')
 const chatRoute = require('./routes/chat.route');
 const mongoDb = require('./database/mongoDB');
-
+const { cloudinaryDB } = require('./database/cloudinaryDB')
 mongoDb()
+cloudinaryDB()
 
 app.get("/", (req, resp) => {
 	resp.send("App is Working");
@@ -28,11 +30,6 @@ app.use('/api/v1/chat', chatRoute)
 
 
 // const cv = require('opencv4nodejs');
-httpServer.listen(9000, () => console.log("http server listening on port 9000"))
-const clients = {}
-const wsServer = new websocketServer({
-	"httpServer": httpServer
-})
 //image-blur-effect
 // const blur_storage = multer.memoryStorage();
 // const blur_upload = multer({ storage: blur_storage });
