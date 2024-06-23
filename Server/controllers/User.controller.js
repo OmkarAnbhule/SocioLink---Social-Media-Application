@@ -84,7 +84,7 @@ const createUser = async (req, resp) => {
         let hashedPassword;
         hashedPassword = await bcrypt.hash(password, 10);
         const user = await User.create({ email, name, password: hashedPassword, username, loginStatus: true });
-        const login = await Log.create({ log_id: email })
+        const login = await Log.create({ log_id: user._id })
         if (user && login) {
             const token = jwt.sign({ user: user._id.toString(), email: email }, process.env.JWT_SECRET_KEY, { expiresIn: process.env.JWT_EXPIRES_IN })
             resp.status(201).send({ Response: "Success", _id: token });
@@ -113,6 +113,7 @@ exports.userRegister = async (req, resp) => {
         }
     }
     catch (e) {
+        console.log(e)
         resp.status(500).send({ Response: 'internal server error' });
     }
 }
@@ -247,7 +248,7 @@ exports.imageUpload = async (req, resp) => {
     try {
         const existingUser = User.find({ email })
         if (existingUser) {
-            const res = await uploadFileOnCloudinary(req.files.file, 'userAvatar')
+            const res = await uploadFileOnCloudinary(req.files.Image, 'userAvatar')
             const img = await User.findOneAndUpdate({ email: email }, { image: res.secure_url }, { new: true })
             if (img) {
                 resp.status(201).send({ Response: 'Success' })
@@ -258,6 +259,7 @@ exports.imageUpload = async (req, resp) => {
         }
     }
     catch (e) {
+        console.log(e)
         resp.status(500).send({ Response: 'internal server error' });
     }
 }

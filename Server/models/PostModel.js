@@ -2,8 +2,9 @@ const mongoose = require('mongoose');
 
 const posts = new mongoose.Schema({
 	id: {
-		type: String,
+		type: mongoose.Schema.Types.ObjectId,
 		required: true,
+		ref:'User'
 	},
 	caption: {
 		type: String,
@@ -26,7 +27,7 @@ const posts = new mongoose.Schema({
 	},
 	likedUsers: [{
 		type: String,
-		
+
 	}],
 	comments: {
 		type: mongoose.Schema.Types.Mixed,

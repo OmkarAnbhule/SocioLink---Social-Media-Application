@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useJwt } from 'react-jwt'
+import { jwtDecode } from 'jwt-decode';
 
 export default function ChatBox({ id }) {
     const api = process.env.REACT_APP_API_URL;
@@ -14,7 +15,7 @@ export default function ChatBox({ id }) {
     const bottomRef = useRef(null)
 
     const getChat = async () => {
-        let result = await fetch(`${api}chat/getChat/${id}/${localStorage.getItem('id')}`, {
+        let result = await fetch(`${api}chat/getChat/${id}/${jwtDecode(localStorage.getItem('id')).user}`, {
             method: 'get',
             headers: {
                 'Content-type': 'application/json',
@@ -127,7 +128,7 @@ export default function ChatBox({ id }) {
                         <div className='head'>
                             {
                                 image ?
-                                    <img width={50} height={50} src={require('../../../images/profile/' + image)}></img>
+                                    <img width={50} height={50} src={image}></img>
                                     : null
                             }
                             <p>{username}&nbsp;&nbsp;<small>{status ? 'online' : `last seen at ${time}`}</small></p>

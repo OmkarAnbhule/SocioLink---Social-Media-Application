@@ -1,15 +1,14 @@
 import React, { useEffect, useId, useRef, useState } from 'react'
 import Comment from './Comment'
 import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 
 export default function Post(props) {
     const api = process.env.REACT_APP_API_URL;
     const navigate = useNavigate();
     const [scrollTop, setScrollTop] = useState(0);
     const divRef = useRef(null);
-    const [img, setImg] = useState('');
-    const [username, setUsername] = useState('');
-    const id = localStorage.getItem('id');
+    const id = jwtDecode(localStorage.getItem('id')).user;
     const [showComments, setShowComments] = useState(false);
     const [comment, setComment] = useState('');
     const [obj, setObj] = useState([]);
@@ -45,12 +44,12 @@ export default function Post(props) {
         let result = await fetch(`${api}user/unfollowUser`, {
             method: 'post',
             body: JSON.stringify({
-                id: localStorage.getItem('id'),
+                id: jwtDecode(localStorage.getItem('id')).user,
                 target: target
             }),
             headers: {
                 'Content-Type': 'application/json',
-                'authorization':'Bearer '+localStorage.getItem('id')
+                'authorization': 'Bearer ' + localStorage.getItem('id')
             }
         })
     }
@@ -61,7 +60,7 @@ export default function Post(props) {
                 method: 'get',
                 headers: {
                     'Content-type': 'application/json',
-                    'authorization':'Bearer '+localStorage.getItem('id')
+                    'authorization': 'Bearer ' + localStorage.getItem('id')
                 }
             })
             result = await result.json()
@@ -80,7 +79,7 @@ export default function Post(props) {
                 method: 'delete',
                 headers: {
                     'Content-Type': 'application/json',
-                    'authorization':'Bearer '+localStorage.getItem('id')
+                    'authorization': 'Bearer ' + localStorage.getItem('id')
                 }
             })
         }
@@ -100,13 +99,13 @@ export default function Post(props) {
                 method: 'post',
                 body: JSON.stringify({
                     comment: comment,
-                    username: username,
+                    username: props.data.id.username,
                     type: 'comment',
                     postId: postId
                 }),
                 headers: {
                     'Content-Type': 'application/json',
-                    'authorization':'Bearer '+localStorage.getItem('id')
+                    'authorization': 'Bearer ' + localStorage.getItem('id')
                 }
             })
             result = await result.json()
@@ -127,7 +126,7 @@ export default function Post(props) {
                     method: 'put',
                     headers: {
                         'Content-type': 'application/json',
-                        'authorization':'Bearer '+localStorage.getItem('id')
+                        'authorization': 'Bearer ' + localStorage.getItem('id')
                     }
                 })
                 result = await result.json()
@@ -146,7 +145,7 @@ export default function Post(props) {
                     method: 'put',
                     headers: {
                         'Content-type': 'application/json',
-                        'authorization':'Bearer '+localStorage.getItem('id')
+                        'authorization': 'Bearer ' + localStorage.getItem('id')
                     }
                 })
                 result = await result.json()
@@ -183,27 +182,9 @@ export default function Post(props) {
 
 
     useEffect(() => {
-        if (props.data.likedUsers.includes(localStorage.getItem('id'))) {
+        if (props.data.likedUsers.includes(jwtDecode(localStorage.getItem('id')).user)) {
             setIsLike(true)
         }
-        async function update() {
-            let result = await fetch(`${api}user/getProfile/${props.data.id}`, {
-                method: 'get',
-                headers: {
-                    'Content-type': 'application/json',
-                    'authorization':'Bearer '+localStorage.getItem('id')
-                }
-            })
-            result = await result.json()
-            if (result.Response == 'Success') {
-                setImg(result.data.image)
-                setUsername(result.data.username)
-                setTime(formatRelativeTime(props.data.date))
-            }
-        }
-        const id = setTimeout(() => {
-            update()
-        }, 3000)
         const id2 = setInterval(() => {
             getComments()
         }, 2000)
@@ -215,14 +196,14 @@ export default function Post(props) {
     return (
         <div className='post'>
             <div className='head'>
-                <div className='profile'>
-                    {img != '' ? <img src={require('../../../images/profile/' + img)}></img> : ''}
-                    <p>{username}&nbsp;<small>{time} ago at {props.data.location}</small></p>
+                <div className='profile' onClick={() => navigate(`/profile/${props.data.id._id}`)}>
+                    {props.data.id.image != '' ? <img src={props.data.id.image}></img> : ''}
+                    <p>{props.data.id.username}&nbsp;<small>{formatRelativeTime(props.data.date)} ago at {props.data.location}</small></p>
                 </div>
                 <button onClick={() => setIsShowOptions(!isShowOptions)}><i className={isShowOptions ? 'bi bi-x-lg' : 'bi bi-three-dots-vertical'}></i></button>
                 <div style={{ transform: isShowOptions ? 'scaleX(1)' : 'scaleX(0)' }} className='post-options'>
-                    {props.data.id === localStorage.getItem('id') ? null : <p onClick={() => unfollow(props.data.id)}>UnFollow</p>}
-                    {props.data.id === localStorage.getItem('id') ? <p onClick={handleDeletePost}>Delete Post</p> : null}
+                    {props.data.id._id === jwtDecode(localStorage.getItem('id')).user ? null : <p onClick={() => unfollow(props.data.id._id)}>UnFollow</p>}
+                    {props.data.id._id === jwtDecode(localStorage.getItem('id')).user ? <p onClick={handleDeletePost}>Delete Post</p> : null}
                     <p onClick={handleCopy}>Copy Link</p>
                     <p>About this account</p>
                 </div>
@@ -235,10 +216,10 @@ export default function Post(props) {
                         props.data.files.map((item, index) => (
                             <div id={`post${index}`} key={index}>
                                 {
-                                    item.mimetype.startsWith('image/')
+                                    item.split('/').includes('image')
                                         ?
                                         <img
-                                            src={require(`../../../images/posts/${item.filename}`)}
+                                            src={item}
                                             alt="Post"
                                             style={{
                                                 filter: `
@@ -252,7 +233,7 @@ export default function Post(props) {
                                         />
                                         :
                                         <>
-                                            <video src={require('../../../images/posts/' + item.filename)}
+                                            <video src={item}
                                                 onClick={(e) => { if (e.target.paused) { e.target.play() } else { e.target.pause() } }}
                                                 ref={ref}
                                             ></video>
@@ -284,7 +265,6 @@ export default function Post(props) {
                 <div>
                     <button onClick={handleLike}><i className={isLike ? 'bi bi-heart-fill' : 'bi bi-heart'} style={{ color: isLike ? 'red' : '' }}></i></button>
                     <button onClick={handleCommentSection}><i className={showComments ? 'bi bi-chat-fill' : 'bi bi-chat-dots'} style={{ color: showComments ? 'cyan' : 'black' }} ></i></button>
-                    <button><i className='bi bi-send'></i></button>
                 </div>
             </div>
             <div className='foot'>
@@ -311,17 +291,6 @@ export default function Post(props) {
                 <div className='comment-input-section'>
                     <input type='text' placeholder='add your comment here...' value={comment} onChange={(e) => setComment(e.target.value)}></input>
                     <button onClick={() => handleComment(props.data._id)}>Comment</button>
-                </div>
-            </div>
-
-            <div className='share-section'>
-                <div className='share-user-container'>
-                    <div className='share-user'>
-                        <img width={50} height={50}></img>
-                    </div>
-                </div>
-                <div className='share-section-btn'>
-                    <button>Share</button>
                 </div>
             </div>
         </div >

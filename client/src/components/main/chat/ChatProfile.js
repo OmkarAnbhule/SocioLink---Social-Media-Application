@@ -53,8 +53,8 @@ export default function ChatProfile({ data, callback }) {
 
     useEffect(() => {
         setTimeout(() => {
-            if(decodedToken)
-            getProfile()
+            if (decodedToken)
+                getProfile()
         }, 1000)
     }, [decodedToken])
 
@@ -64,7 +64,7 @@ export default function ChatProfile({ data, callback }) {
                 <div className='head'>
                     {
                         img && decodedToken ?
-                            <img width={50} height={50} src={require('../../../images/profile/' + img)}></img>
+                            <img width={50} height={50} src={img}></img>
                             : null
                     }
                 </div>

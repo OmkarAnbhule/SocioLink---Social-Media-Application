@@ -12,6 +12,7 @@ import Logout from './components/main/Logout';
 import Explore from './components/main/Explore';
 import LinkPost from './components/main/post/LinkPost';
 import ChatList from './components/main/chat/ChatList';
+import Profile from './components/main/Profile';
 function App() {
 
   const callback = (data) => {
@@ -45,10 +46,11 @@ function App() {
             <Route path='/explore' element={<Explore />}></Route>
             <Route path='post/:id' element={<LinkPost />}></Route>
             <Route path='chats' element={<ChatList />}></Route>
+            <Route path='/profile/:id' element={<Profile />}></Route>
           </Routes>
         </div>
-      </BrowserRouter>
-    </div>
+      </BrowserRouter >
+    </div >
   );
 }
 

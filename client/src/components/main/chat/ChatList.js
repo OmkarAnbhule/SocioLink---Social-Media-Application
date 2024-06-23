@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import './style.css'
 import ChatBox from './ChatBox'
 import ChatProfile from './ChatProfile'
-
+import { jwtDecode } from 'jwt-decode'
 
 export default function ChatList() {
     const api = process.env.REACT_APP_API_URL;
@@ -14,7 +14,7 @@ export default function ChatList() {
     const [chats, setChats] = useState([]);
 
     const handleSearch = async () => {
-        let result = await fetch(`${api}chat/search/${localStorage.getItem('id')}/${search}`, {
+        let result = await fetch(`${api}chat/search/${jwtDecode(localStorage.getItem('id')).user}/${search}`, {
             method: 'get',
             headers: {
                 'Content-type': 'application/json',
@@ -46,7 +46,7 @@ export default function ChatList() {
                 'authorization': 'Bearer ' + localStorage.getItem('id')
             },
             body: JSON.stringify({
-                id: localStorage.getItem('id'),
+                id: jwtDecode(localStorage.getItem('id')).user,
                 receiver: id
             })
         })
@@ -57,7 +57,7 @@ export default function ChatList() {
     }
 
     const getChats = async () => {
-        let result = await fetch(`${api}chat/getChats/${localStorage.getItem('id')}`, {
+        let result = await fetch(`${api}chat/getChats/${jwtDecode(localStorage.getItem('id')).user}`, {
             method: 'get',
             headers: {
                 'Content-type': 'application/json',
@@ -110,10 +110,10 @@ export default function ChatList() {
                         searchBox &&
                         <div className='search-output' ref={divRef}>
                             {
-                                users.length > 0 ?
+                                users && users.length > 0 ?
                                     users.map((item, index) => (
                                         <div className='search-output-container' key={index} onClick={() => handleChatBox(item._id)}>
-                                            <img width={50} height={50} src={require('../../../images/profile/' + item.image)}></img>
+                                            <img width={50} height={50} src={item.image}></img>
                                             <p>{item.username}</p>
                                             <button><i className='bi bi-chat-text-fill'></i></button>
                                         </div>

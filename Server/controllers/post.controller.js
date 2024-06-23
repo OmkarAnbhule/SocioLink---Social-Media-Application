@@ -80,14 +80,20 @@ exports.createPost = async (req, resp) => {
     try {
         let files_arr = []
         const { id, caption, location, tags } = req.body
-        const uploadPromises = req.files.file.map(item => uploadFileOnCloudinary(item, 'reviewFiles'));
+        let uploadPromises
+        if (Array.isArray(req.files.files)) {
+            uploadPromises = req.files.files.map(item => uploadFileOnCloudinary(item, 'reviewFiles'));
+        }
+        else
+            uploadPromises = [uploadFileOnCloudinary(req.files.files, 'reviewFiles')]
         const uploadResults = await Promise.all(uploadPromises);
+        console.log(uploadResults)
         files_arr = uploadResults.map(upload => upload.secure_url);
         const filters = Object.values(JSON.parse(req.body.filters)).map(obj => obj);
         const existingUser = await User.find({ _id: new mongoose.Types.ObjectId(id) })
         if (existingUser) {
             const post_create = await Post.create({
-                id: id,
+                id: new mongoose.Types.ObjectId(id),
                 location: location,
                 caption: caption,
                 tags: tags,
@@ -104,24 +110,31 @@ exports.createPost = async (req, resp) => {
 
     }
     catch (e) {
+        console.log(e)
         resp.status(500).send({ Response: 'internal server error' });
     }
 }
 
 exports.getAllPost = async (req, resp) => {
     try {
-        const existing_User = await User.find({ _id: new mongoose.Types.ObjectId(req.params.id) })
-        if (existing_User && existing_User[0].following) {
+        const existing_User = await User.find({ _id: req.params.id })
+        if (existing_User[0] && existing_User[0].following.length > 0) {
             let arr = existing_User[0].following
             let res = []
-            for (let i = 0; i < arr.length; i++) {
-                let posts = await Post.find({ id: arr[i] })
-                res[i] = posts
-            }
+            await Promise.all(arr.map(async (userId, index) => {
+                const posts = await Post.findOne({ id: userId }).populate({ path: 'id' });
+                if (posts)
+                    res[index] = posts;
+            }));
             resp.status(201).send({ Response: 'Success', data: res })
         }
         else {
-            resp.status(201).send({ Response: 'Success', data: [] })
+            const posts = await Post.find().populate({
+                path: 'id',
+                match: { accountType: 'public', _id: { $ne: req.user.user } }
+            });
+            const publicPosts = posts.filter(post => post.id !== null);
+            resp.status(201).send({ Response: 'Success', data: publicPosts });
         }
     }
     catch (e) {
@@ -129,10 +142,11 @@ exports.getAllPost = async (req, resp) => {
     }
 }
 
+
 exports.getPost = async (req, resp) => {
     try {
         console.log(new mongoose.Types.ObjectId(req.params.id))
-        const result = await Post.find({ _id: new mongoose.Types.ObjectId(req.params.id) });
+        const result = await Post.find({ _id: new mongoose.Types.ObjectId(req.params.id) }).populate({ path: 'id' });
         if (result) {
             console.log(result)
             resp.status(201).send({ Response: 'Success', data: result[0] })
@@ -140,6 +154,18 @@ exports.getPost = async (req, resp) => {
     }
     catch (e) {
         console.log(e)
+        resp.status(500).send({ Response: 'internal server error' });
+    }
+}
+
+exports.getUserPost = async (req, resp) => {
+    try {
+        const { userId } = req.params
+        const posts = await Post.find({ id: userId })
+        if (posts) {
+            resp.status(201).send({ Response: 'Success', data: posts })
+        }
+    } catch (e) {
         resp.status(500).send({ Response: 'internal server error' });
     }
 }

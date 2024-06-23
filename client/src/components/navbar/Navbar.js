@@ -9,9 +9,10 @@ export default function Navbar() {
   const navigate = useNavigate();
   const id = localStorage.getItem('id')
   const [img, setImg] = useState('')
+  const [open, setOpen] = useState(false)
   const isLoggedin = localStorage.getItem('login')
   const logout = async () => {
-    let result = await fetch(`${api}user/logout/${id}`, {
+    let result = await fetch(`${api}user/logout/${decodedToken.user}`, {
       method: 'delete',
       headers: {
         'Content-type': 'application/json',
@@ -92,18 +93,21 @@ export default function Navbar() {
         </div>
         <h1>Socilink</h1>
       </div>
+      <div className='ham'>
+        <button onClick={() => setOpen(!open)}>
+          <i className='bi bi-list'></i>
+        </button>
+      </div>
       {isLoggedin == 'true' ?
         <>
-          <div className='btn-group'>
+          <div className={`btn-group ${open.toString()}`}>
             <button onClick={logout}>Logout</button>
-            <button>Notify</button>
             <button onClick={create}>Create Post</button>
             <button onClick={explore}>Explore</button>
-            <img src=''></img>
           </div>
-          <div className='profile'>
-            <button onClick={handleNavigate('chats')}>Chat</button>
-            {img != '' ? (<img src={require('../../images/profile/' + img)}></img>) : null}
+          <div className='profile' onClick={() => navigate(`/profile/${decodedToken.user}`)}>
+            <button onClick={handleNavigate('chats')}><i className='bi bi-chat-text'></i></button>
+            {img != '' ? (<img src={img}></img>) : null}
           </div>
         </>
         : null}

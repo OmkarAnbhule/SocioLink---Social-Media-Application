@@ -3,22 +3,22 @@ import './style.css'
 import { useLocation, useNavigate } from 'react-router-dom'
 import Post from './post/Post';
 import Loader from '../web_components/loader/Loader'
+import { jwtDecode } from 'jwt-decode';
 
 export default function Home() {
   const api = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
-  const val = localStorage.getItem('id')
   const [curr, setCurr] = useState(parseInt(localStorage.getItem('time')));
   const [pre, setPre] = useState(parseInt(localStorage.getItem('time')));
   const [posts, setPost] = useState([]);
   // let ws = new WebSocket("ws://localhost:9000");
 
   const logout = async () => {
-    let result = await fetch(`${api}user/logout/${val}`, {
+    let result = await fetch(`${api}user/logout/${jwtDecode(localStorage.getItem('id').user)}`, {
       method: 'delete',
       headers: {
         'Content-type': 'application/json',
-        'authorization':'Bearer '+localStorage.getItem('id')
+        'authorization': 'Bearer ' + localStorage.getItem('id')
       }
     })
     result = await result.json()
@@ -74,16 +74,16 @@ export default function Home() {
 
 
   const handlePosts = async () => {
-    let result = await fetch(`${api}post/get-posts/${localStorage.getItem('id')}`, {
+    let result = await fetch(`${api}post/get-posts/${jwtDecode(localStorage.getItem('id')).user}`, {
       method: 'get',
       headers: {
         'Content-Type': 'application/json',
-        'authorization':'Bearer '+localStorage.getItem('id')
+        'authorization': 'Bearer ' + localStorage.getItem('id')
       }
     })
     result = await result.json()
     if (result.Response == 'Success') {
-      setPost(result.data[0])
+      setPost(result.data)
     }
   }
 
@@ -99,31 +99,11 @@ export default function Home() {
   return (
     <div className='home'>
       <div className='story'>
-        <div className='your_story'>
-          <img src=''></img>
-          <p>Username</p>
-        </div>
-        <div>
-          <img ></img>
-          <p>Username</p>
-        </div>
-        <div>
-          <img ></img>
-          <p>Username</p>
-        </div>
-        <div>
-          <img ></img>
-          <p>Username</p>
-        </div>
-        <div>
-          <img ></img>
-          <p>Username Username</p>
-        </div>
       </div>
       <div className='body'>
         {
-          posts && posts.length > 0 ?
-            posts && posts.map((item, index) => (
+          posts && posts.length > 0 ? 
+            posts.map((item, index) => (
               <Post key={index} data={item} />
             ))
             :

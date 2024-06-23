@@ -238,7 +238,6 @@ export default function Otp_form() {
         setkey(random(1, 20));
 
         let otp = first + second + third + fourth + fifth + sixth;
-        console.log(otp)
         if (otp.length < 6 || isNaN(otp)) {
             display_data('empty')
         }
@@ -403,9 +402,6 @@ export default function Otp_form() {
         }
     }
     const display_data = (result) => {
-
-        console.log(result.Response)
-
         setmsg({
             display: 'block',
         })

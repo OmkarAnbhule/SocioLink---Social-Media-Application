@@ -34,6 +34,10 @@ const UserSchema = new mongoose.Schema({
 	loginStatus: {
 		type: Boolean,
 	},
+	accountType: {
+		type: String,
+		default: 'public'
+	},
 	date: {
 		type: Date,
 		default: Date.now,

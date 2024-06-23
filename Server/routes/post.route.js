@@ -6,6 +6,7 @@ const app = require('express').Router()
 app.post('/createPost', auth, postController.createPost);
 app.get('/get-posts/:id', auth, postController.getAllPost);
 app.get('/get-post/:id', auth, postController.getPost);
+app.get('/getUserPost/:userId', auth, postController.getUserPost);
 app.post('/addComment', auth, postController.addComment);
 app.get('/get-comments/:id', auth, postController.getComments);
 app.put('/like-comment', auth, postController.likeComment);

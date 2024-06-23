@@ -10,7 +10,7 @@
   display: grid;
   justify-content: center;
   align-items: center;
-  width:calc(100vw-100px);
+  width:calc(100vw);
   overflow-x: hidden;
 }
 .App > div:not(:first-child)

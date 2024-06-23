@@ -145,7 +145,6 @@ export default function Password(props) {
     else {
       setpicon("bi bi-x-circle-fill");
     }
-    console.log("verifiedList: ", `${(verifiedList.length / 5) * 100}%`);
   };
   const getActiveColor = (type) => {
     if (type === "Strong") return "limegreen";

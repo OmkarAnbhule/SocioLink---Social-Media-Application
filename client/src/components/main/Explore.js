@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { jwtDecode } from 'jwt-decode';
 
 export default function Explore() {
     const api = process.env.REACT_APP_API_URL;
     const [search, setSearch] = useState('');
     const [user, setUser] = useState([]);
+    const [posts, setPosts] = useState([]);
 
     useEffect(() => {
         const delaySearch = setTimeout(() => {
@@ -21,13 +23,15 @@ export default function Explore() {
         setSearch(e.target.value);
     };
 
+
+
     const getData = async () => {
         try {
-            const result = await fetch(`${api}user/get-users/${localStorage.getItem('id')}/${search}`, {
+            const result = await fetch(`${api}user/get-users/${jwtDecode(localStorage.getItem('id')).user}/${search}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    'authorization':'Bearer '+localStorage.getItem('id')
+                    'authorization': 'Bearer ' + localStorage.getItem('id')
                 },
             });
 
@@ -40,7 +44,7 @@ export default function Explore() {
 
     const display = (res) => {
         if (res && res.data) {
-            setUser(Object.entries(res.data).filter(([key, value]) => value._id !== localStorage.getItem('id')));
+            setUser(res.data)
         } else {
             setUser([]);
         }
@@ -50,10 +54,10 @@ export default function Explore() {
         try {
             const result = await fetch(`${api}user/followUser`, {
                 method: 'POST',
-                body: JSON.stringify({ id: localStorage.getItem('id'), target }),
+                body: JSON.stringify({ id: jwtDecode(localStorage.getItem('id')).user, target }),
                 headers: {
                     'Content-Type': 'application/json',
-                    'authorization':'Bearer '+localStorage.getItem('id')
+                    'authorization': 'Bearer ' + localStorage.getItem('id')
                 },
             });
 
@@ -66,13 +70,13 @@ export default function Explore() {
 
     return (
         <div className='explore'>
-            <p>{search}</p>
-            <input type='text' onChange={handleSearch} value={search} />
-            <div>
-                {user.length !== 0 ? (
-                    user.map(([key, item], index) => (
+            <input type='text' onChange={handleSearch} value={search} placeholder='Enter usename or name of user you want to follow' />
+            <div className='search-items'>
+                <h1>Results</h1>
+                {user && user.length > 0 ? (
+                    user.map((item, index) => (
                         <div key={index}>
-                            <img width={50} height={50} src={require(`../../images/profile/${item.image}`)} alt={item.username} />
+                            <img width={50} height={50} src={item.image} alt={item.username} />
                             <p>{item.username}</p>
                             <button onClick={() => handleFollow(item._id)}>Follow</button>
                         </div>

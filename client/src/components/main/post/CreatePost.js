@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import pip from '../../../images/defaults/create_post.jpg'
-import pip1 from '../../../images/defaults/filters.jpg'
 import Loader from '../../web_components/loader/Loader'
+import { jwtDecode } from 'jwt-decode'
 
 export default function CreatePost() {
     const api = process.env.REACT_APP_API_URL;
@@ -321,7 +320,7 @@ export default function CreatePost() {
         const jsonString = JSON.stringify(filterArr)
         for (var item of files.toReversed())
             formData.append('files', item)
-        formData.append('id', localStorage.getItem('id'))
+        formData.append('id', jwtDecode(localStorage.getItem('id')).user)
         formData.append('filters', jsonString)
         formData.append('caption', caption)
         formData.append('location', location)
@@ -330,8 +329,7 @@ export default function CreatePost() {
             method: 'post',
             body: formData,
             headers: {
-                'Content-Type':'multipart/form-data',
-                'authorization':'Bearer '+localStorage.getItem('id')
+                'authorization': 'Bearer ' + localStorage.getItem('id')
             }
         })
         result = await result.json()
@@ -375,7 +373,7 @@ export default function CreatePost() {
             </div>
             <div className='post'>
                 <div>
-                    {files.length < 1 ? (<label htmlFor='file'><img src={pip} width={300} height={300} style={{ transform: zoom }}></img></label>) : null}
+                    {files.length < 1 ? (<label htmlFor='file'><img src={'https://res.cloudinary.com/dvpmx2xxb/image/upload/v1719130562/ieg4mghlzrmkmyppu1kg.jpg'} width={300} height={300} style={{ transform: zoom }}></img></label>) : null}
                     <input type='file' id='file' style={{ display: 'none' }} onChangeCapture={handleFileChange} accept='image/*,video/*' multiple></input>
                     {files.length > 0 ? (<div className='display' ref={containerRef}>
 
@@ -473,9 +471,6 @@ export default function CreatePost() {
                                     <input type='range' onChange={handleInvert} value={filterArr[fileId] ? filterArr[fileId].invert ? filterArr[fileId].invert : invert : invert}></input>
                                     <p>{filterArr[fileId] ? filterArr[fileId].invert ? filterArr[fileId].invert : invert : invert}%</p>
                                 </div>
-                            </div>
-                            <div className='adv-combination' style={{ display: !show ? 'none' : 'grid' }}>
-                                <img src={pip1} width={100} height={100} onClick={blurImage}></img>
                             </div>
                         </div>
                     </div>)

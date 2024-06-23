@@ -8,6 +8,8 @@ import Loader from '../../web_components/loader/Loader';
 import Snack_bar from '../../web_components/snack_bar/Snack_bar';
 import { useLocation, useNavigate } from 'react-router-dom';
 import pip from './default.png'
+import { jwtDecode } from 'jwt-decode'
+
 export default function Register() {
   const api = process.env.REACT_APP_API_URL;
   const { state } = useLocation();
@@ -179,10 +181,13 @@ export default function Register() {
     try {
       const formdata = new FormData();
       formdata.append('Image', Image)
-      formdata.append('email', localStorage.getItem('id'))
+      formdata.append('email', jwtDecode(localStorage.getItem('id')).email)
       let result = await fetch(`${api}user/uploadImage`, {
         method: 'post',
         body: formdata,
+        headers: {
+          'authorization': 'Bearer ' + localStorage.getItem('id')
+        }
       })
       result = await result.json()
       console.log(result)
@@ -252,7 +257,7 @@ export default function Register() {
     try {
       const formdata = new FormData();
       formdata.append('Image', ImageFile)
-      formdata.append('email', localStorage.getItem('id'))
+      formdata.append('email', jwtDecode(localStorage.getItem('id')).email)
       let result = await fetch(`${api}user/uploadImage`, {
         method: 'post',
         body: formdata,
