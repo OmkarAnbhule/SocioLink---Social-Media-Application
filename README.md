@@ -63,9 +63,10 @@ Replace your_mongodb_uri, your_jwt_secret, your_cloudinary_* with your actual Mo
   This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Acknowledgements
-**OpenCV** - for face detection and recognition libraries.
-**React** - for building the frontend user interface.
-**Flask** - for building the backend API.
+**React with Vite** - for building the frontend.
+**Node.js with Express** - for building the backend API.
+**MongoDB** - for database storage (MongoDB Atlas for cloud hosting).
+**Cloudinary** - for media management and image uploads.
 ## Author
  - Omkar Suresh Anbhule
  - GitHub: https://github.com/OmkarAnbhule
