@@ -23,7 +23,7 @@ This project is a social media application built using React with Vite for the f
 1. **Clone Repository**
 
    ```bash
-   git clone https://github.com/yourusername/social-media-app.git
+   git clone https://github.com/OmkarAnbhule/SocioLink---Social-Media-Application.git
    cd social-media-app
 2. **Setup Frontend**
    ```bash
