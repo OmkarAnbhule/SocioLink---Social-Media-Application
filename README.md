@@ -70,5 +70,5 @@ Replace your_mongodb_uri, your_jwt_secret, your_cloudinary_* with your actual Mo
 ## Author
  - Omkar Suresh Anbhule
  - GitHub: https://github.com/OmkarAnbhule
- - Live Demo: https://blog-site-chi-pearl.vercel.app/
+ - Live Demo: https://sociolink-one.vercel.app/
    
